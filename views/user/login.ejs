@@ -1,0 +1,48 @@
+<%- include('../partials/userHeader') %>
+
+<div class="contact1-section-area sp6" id="contact">
+  <div class="container">
+  
+    <div class="row">
+      
+  
+      <div class="col-lg-7 aos-init aos-animate" data-aos="zoom-out" data-aos-duration="1000">
+        <div class="contact-info-area">
+          
+          <img src="assets/img/bg/log.png" alt="">
+         
+        </div>
+      </div>
+      <div class="col-lg-5 aos-init aos-animate card shadow-lg border-0 d-flex justify-content-center" data-aos="zoom-out" data-aos-duration="1200">
+          <div class="contact-boxarea m-1">
+            <h3 class="text-center">Login</h3>
+            <p class="text-center pb-3 fw-semibold text-secondary" >Login Your Account Here</p>
+            <form action="/login" method="POST">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="input-area">
+                      <label class="fw-semibold">Email</label >
+                    <input type="text" id="firstName" class="p-2 ms-0 m-2" name="email" placeholder="Email" required="">
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="input-area">
+                      <label class="fw-semibold">Password</label >
+                    <input type="password" id="password" class="p-2 ms-0 m-2" name="password" placeholder="Password" required="">
+                  </div>
+                </div>
+                <div class="col-lg-12 mt-2">
+                  <div class="input-area">
+                    <button type="submit" class="btn btn-primary w-100 rounded-3">Sign in</button>
+                  </div>
+                </div>
+                <div class="col-lg-12 p-2 text-center">
+                  Don't have account yet? <a class="text-primary fw-bold" href="/signup" tabindex="-1">Sign up</a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

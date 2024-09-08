@@ -1558,6 +1558,16 @@ Location:
 .bg2 {
   background: var(--ztc-bg-bg-4);
 }
+.bg1 {
+  background: var(--ztc-bg-bg-7);
+}
+.bg3 {
+  background: var(--ztc-bg-bg-8);
+}
+.bg4 {
+  background: var(--ztc-bg-bg-2);
+}
+
 
 /*============= COMMON CSS AREA ENDS===============*/
 .sp1 {
@@ -7525,7 +7535,7 @@ Location:
 }
 .homepage3-body .header-area.homepage3 .header-elements .main-menu ul li:hover > a {
   transition: all 0.4s;
-  color: var(--ztc-text-text-5) !important;
+  color: var(--ztc-text-text-4) !important;
 }
 .homepage3-body .header-area.homepage3 .header-elements .main-menu ul li .tp-submenu {
   visibility: hidden;
@@ -7570,7 +7580,7 @@ Location:
   transition: all 0.4s;
   visibility: visible;
   opacity: 1;
-  color: var(--ztc-text-text-5);
+  color: var(--ztc-text-text-4);
 }
 .homepage3-body .header-area.homepage3 .header-elements .main-menu ul li ul.dropdown-padding li {
   display: block;
@@ -7599,11 +7609,11 @@ Location:
   display: inline-block;
   visibility: hidden;
   opacity: 0;
-  background: var(--ztc-text-text-5);
+  background: var(--ztc-text-text-4);
 }
 .homepage3-body .header-area.homepage3 .header-elements .main-menu ul li ul.dropdown-padding li a:hover {
   padding-left: 25px;
-  color: var(--ztc-text-text-5);
+  color: var(--ztc-text-text-4);
 }
 .homepage3-body .header-area.homepage3 .header-elements .main-menu ul li ul.dropdown-padding li a:hover::after {
   border-radius: 4px;
@@ -10193,7 +10203,7 @@ Location:
   }
 }
 .choose-section-area .accordian-tabs-area .accordion .accordion-item {
-  background: var(--ztc-text-text-4);
+  background: rgb(107, 12, 196);
   border-radius: 7px;
   border: 1px solid #E0E4E8;
 }
@@ -10790,6 +10800,30 @@ Location:
   }
 }
 
+@media only screen and (min-width: 300px) and (max-width: 575px) {
+  .step-by-step .pera p{
+    padding-left: 10px;
+    
+  }
+
+  .step-by-step .pera {
+    padding-bottom: 30px;
+    
+  }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 767px) {
+    .step-by-step {
+      position: relative;
+      z-index: 1;
+      border-left: 1px dashed #B2BBC6;
+      border-top: none;
+  }
+  .step-by-step::after {
+    border-top: none;
+  }
+}
+
 .step-by-step {
   position: relative;
   z-index: 1;
@@ -10850,7 +10884,7 @@ Location:
   }
 }
 .contact1-section-area .contact-info-area {
-  background: var(--ztc-text-text-2);
+  background: #dee7f5;
   border-radius: 8px;
   padding: 40px 40px;
   position: relative;
@@ -11614,7 +11648,7 @@ Location:
 .location-section-area .location-boxes p {
   color: var(--ztc-text-text-3);
   font-family: var(--ztc-family-font1);
-  font-size: var(--ztc-font-size-font-s16);
+  font-size: var(--ztc-font-size-font-s14);
   font-style: normal;
   font-weight: var(--ztc-weight-medium);
   line-height: 16px;
@@ -12521,8 +12555,6 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   }
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area.owl-carousel .owl-item.active {
-  background: rgb(26,11,59);
-background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rgba(58,30,120,1) 97%);
   position: relative;
   z-index: 2;
   border-radius: 8px;
@@ -12535,8 +12567,6 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   transition: all 0.4s;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area.owl-carousel .owl-item.active .testimonial-author-box ul li {
-  background: rgb(26,11,59);
-background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rgba(58,30,120,1) 97%);
   transition: all 0.4s;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area.owl-carousel .owl-item.active .testimonial-author-box .pera {
@@ -12558,42 +12588,29 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box {
   position: relative;
   z-index: 1;
-  padding: 32px;
   border-radius: 8px;
   transition: all 0.4s;
-  background: #303168;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box:hover {
   transition: all 0.4s;
-  background: var(--ztc-bg-bg-10);
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box:hover .quito1 {
   filter: brightness(0) invert(1);
   transition: all 0.4s;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box:hover ul li {
-  background: rgb(26,11,59);
-background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rgba(58,30,120,1) 97%);
   transition: all 0.4s;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box .quito1 {
-  height: 48px;
-  width: 48px;
   -o-object-fit: cover;
      object-fit: cover;
   transition: all 0.4s;
 }
-.testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box ul {
-  margin-bottom: 32px;
-}
+
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box ul li {
   display: inline-block;
-  height: 28px;
-  width: 28px;
   text-align: center;
-  line-height: 28px;
   transition: all 0.4s;
-  background: #46477B;
   border-radius: 4px;
   color: #FFBA00;
 }
@@ -12617,8 +12634,6 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   align-items: center;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box .content-area .images-content .img1 img {
-  height: 70px;
-  width: 70px;
   border-radius: 50%;
 }
 .testimonial2-section-area .testimonial2-owl-carousel-area .testimonial-author-box .content-area .images-content .content {
@@ -12712,7 +12727,7 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
 
 .testimonial3-section-area {
   position: relative;
-  background: var(--ztc-bg-bg-14);
+  background: var(--ztc-bg-bg-2);
 }
 .testimonial3-section-area .testimonial-header {
   margin-bottom: 60px;
@@ -12728,8 +12743,6 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   }
 }
 .testimonial3-section-area .testimonial2-owl-carousel-area.owl-carousel .owl-item.active {
-  background: rgb(26,11,59);
-background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rgba(58,30,120,1) 97%);
   position: relative;
   z-index: 2;
   border-radius: 8px;
@@ -12869,7 +12882,7 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   height: 10px;
   width: 10px;
   display: inline-block;
-  background: var(--ztc-bg-bg-5);
+  background: var(--ztc-bg-bg-4);
   border-radius: 50%;
   margin: 0 20px 0 0;
   position: relative;
@@ -12880,7 +12893,7 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   height: 24px;
   width: 24px;
   text-align: center;
-  background: var(--ztc-bg-bg-5);
+  background: var(--ztc-bg-bg-4);
   left: -7px;
   top: -7px;
   transition: all 0.4s;
@@ -12890,7 +12903,7 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
   opacity: 0;
 }
 .testimonial3-section-area .testimonial2-owl-carousel-area .owl-dots button.active {
-  background: var(--ztc-text-text-5);
+  background: var(--ztc-text-text-4);
   transition: all 0.4s;
 }
 .testimonial3-section-area .testimonial2-owl-carousel-area .owl-dots button.active::after {
@@ -14465,3 +14478,139 @@ background: linear-gradient(53deg, rgba(26,11,59,1) 0%, rgba(47,24,99,1) 59%, rg
 }
 
 /*============= CASE STUDY CSS AREA ENDS ===============*//*# sourceMappingURL=main.css.map */
+.video-sty{
+  height: 400px;
+  width: 800px;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .video-sty {
+    height: 400px;
+  width: 600px;
+  }
+}
+@media only screen and (min-width: 500px) and (max-width: 768px) {
+  .video-sty {
+    height: 400px;
+  width: 500px;
+  }
+}
+@media only screen and (min-width: 300px) and (max-width: 500px) {
+  .video-sty {
+    height: 300px;
+    width: 400px;
+  }
+}
+
+.sm-font{
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sh{
+  box-shadow: 0 0 1px 0 rgba(0, 12, 32, .04), 0 10px 16px 0 rgba(10, 31, 68, .06);
+}
+
+.testimonial-box {
+  background-color: #fff;
+  box-shadow: 0 0 1px 0 rgba(0, 12, 32, .04), 0 10px 16px 0 rgba(10, 31, 68, .06);
+  border-radius: 20px;
+  padding: 20px 30px;
+  margin-top: 30px;
+}
+
+.personal-info {
+  padding: 5px 0 20px 0;
+  border-bottom: 1px solid #edf1f2;
+}
+
+.rating {
+  background-color: #0095f7;
+  padding: 2px 12px;
+  border-radius: 50px;
+}
+
+.testimonial-box span {
+  font-size: 14px;
+  color: #fff;
+}
+
+.profile-picture {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.dbox .icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #46b5d1;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.contactForm .label {
+  color: #000;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  -o-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+
+.form-control {
+  height: 36px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 14px;
+  border-radius: 2px;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+
+#contactForm .form-control {
+  font-size: 16px;
+}
+
+.contactForm .form-control {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.submitting {
+  float: left;
+  width: 100%;
+  padding: 10px 0;
+  display: none;
+  font-size: 16px;
+  font-weight: bold;
+}
