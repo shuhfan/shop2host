@@ -21,13 +21,29 @@ const loadHome = (req,res,next)=>{
         
     }
 }
-const loadPricing = (req,res,next)=>{
+const loadLitePlan = (req,res,next)=>{
     try {
-        res.render('pricing')
+        res.render('liteplan')
     } catch (error) {
         console.log(error.message);
         
     }
+}
+const loadHeroPlan = (req,res,next)=>{
+  try {
+      res.render('heroplan')
+  } catch (error) {
+      console.log(error.message);
+      
+  }
+}
+const loadProPlan = (req,res,next)=>{
+  try {
+      res.render('proplan')
+  } catch (error) {
+      console.log(error.message);
+      
+  }
 }
 const loadFAQ = (req,res,next)=>{
     try {
@@ -180,9 +196,29 @@ const login = ('/login', async (req, res) => {
     }
   };
 
+const loadTC = (req,res)=>{
+  try {
+    res.render('TC')
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
+
+const privacyPolicy = (req,res)=>{
+  try {
+    res.render('privacyPolicy')
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
+
 module.exports = {
     loadHome,
-    loadPricing,
+    loadLitePlan,
+    loadHeroPlan,
+    loadProPlan,
     loadFAQ,
     loadContact,
     loadAbout,
@@ -191,4 +227,6 @@ module.exports = {
     signup,
     login,
     verifyEmail,
+    loadTC,
+    privacyPolicy,
 }
