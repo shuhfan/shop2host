@@ -548,3 +548,14 @@ if($('.reveal').length){gsap.registerPlugin(ScrollTrigger);let revealContainers=
 //========== PARALLAX AREA ============= //
 
 })(jQuery);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.querySelector('#sidebar');
+  const sidebarToggle = document.querySelector('.sidebar-toggle');
+  const wrapper = document.querySelector('.wrapper');
+
+  sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    wrapper.classList.toggle('collapsed');
+  });
+});

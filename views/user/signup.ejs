@@ -1,75 +1,59 @@
+<!-- ------------- -->
+
 <%-include('../partials/userHeader')%>
 
-<div class="contact1-section-area sp6" id="contact">
-  <div class="container">
-  
-    <div class="row">
-      
-  
-      <div class="col-lg-7 aos-init aos-animate" data-aos="zoom-out" data-aos-duration="1000">
-        <div class="contact-info-area" style="height: 100%;">
-          
-          <img src="assets/img/bg/log.png" alt="">
-         
+  <div class="form-wrapper">
+    <div class="form-container">
+      <p class="title">Create account</p>
+      <% if (message) { %>
+        <div class="alert alert-danger text-center fw-bold pb-2">
+          <%= message %>
         </div>
-      </div>
-      <div class="col-lg-5 aos-init aos-animate card shadow-lg border-0 d-flex justify-content-center" data-aos="zoom-out" data-aos-duration="1200">
-          <div class="contact-boxarea m-1">
-            <h3 class="text-center">Signup</h3>
-            <p class="text-center pb-3 fw-semibold text-secondary" >Create New Account Here</p>
-            <form action="/signup" method="POST">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Name</label >
-                    <input type="text" id="firstName" class="p-2 ms-0 m-2" name="name" placeholder="Name" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Phone</label >
-                    <input type="number" id="phone" class="p-2 ms-0 m-2" name="phone" placeholder="Phone" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Email</label >
-                    <input type="email" id="email" class="p-2 ms-0 m-2" name="email" placeholder="Email" required="">
-                  </div>
-                </div>
-                
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Password</label >
-                    <input type="password" id="password" class="p-2 ms-0 m-2" name="password" placeholder="Password" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Confirm Password</label >
-                    <input type="password" id="confirmpassword" class="p-2 ms-0 m-2" name="confirmPassword" placeholder="Confirm Password" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12 mt-2">
-                  <div class="input-area">
-                    <button type="submit" class="btn btn-primary w-100 rounded-3">Sign up</button>
-                  </div>
-                </div>
-                <div class="col-lg-12 p-2 text-center">
-                   Already have account? <a class="text-primary fw-bold" href="/login" tabindex="-1">Sign in</a>
-                </div>
-              </div>
-            </form>
+        <% } %>
+          <p class="sub-title">Let's get started with your 30 days free trial</p>
+
+          <!-- Signup form starts here -->
+          <form class="form" action="/signup" method="POST">
+            <input type="text" class="input" name="name" placeholder="Name" required>
+            <input type="email" class="input" name="email" placeholder="Email" required>
+            <input type="password" class="input" name="password" placeholder="Password" required>
+            <input type="password" class="input" name="confirmPassword" placeholder="Confirm Password" required>
+            <button class="form-btn">Create account</button>
+          </form>
+
+          <p class="sign-up-label">
+            Already have an account? <a class="sign-up-link" href="/login">Log in</a>
+          </p>
+
+          <!-- Google Signup -->
+          <div class="buttons-container">
+            <a href="/auth/google" class="google-login-button">
+              <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px" y="0px"
+                class="google-icon" viewBox="0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+      c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
+      c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.652,43.789,21.348,43.611,20.083z"></path>
+                <path fill="#FF3D00"
+                  d="M6.305,14.691l6.571,4.818C14.48,16.858,18.9,14,24,14c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657 C34.046,6.053,29.268,4,24,4C16.319,4,9.436,8.336,6.305,14.691z">
+                </path>
+                <path fill="#4CAF50"
+                  d="M24,44c5.129,0,9.788-1.962,13.293-5.172l-6.104-5.317C28.379,34.855,26.246,36,24,36c-5.192,0-9.606-3.33-11.263-7.988 l-6.555,5.049C10.068,39.634,16.612,44,24,44z">
+                </path>
+                <path fill="#1976D2"
+                  d="M43.611,20.083H42V20H24v8h11.303c-0.793,2.24-2.173,4.196-3.932,5.713c0.002-0.002,0.003-0.003,0.005-0.005 l6.104,5.317C35.698,39.746,40,32.974,40,24C40,22.652,39.789,21.348,43.611,20.083z">
+                </path>
+              </svg>
+              <span>Log in with Google</span>
+            </a>
           </div>
-        </div>
     </div>
   </div>
-</div>
+
   <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function (event) {
       const password = document.querySelector('input[name="password"]').value;
       const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
-      
+
       if (password !== confirmPassword) {
         event.preventDefault();
         alert('Passwords do not match!');
@@ -77,5 +61,110 @@
     });
   </script>
 
-  
-  
+  <style>
+    /* Centering the form wrapper */
+    .form-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+      padding-top: 100px;
+    }
+
+    /* Styling the form container */
+    .form-container {
+      width: 350px;
+      background-color: #fff;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      border-radius: 10px;
+      padding: 20px 30px;
+    }
+
+    .title {
+      text-align: center;
+      font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+      margin: 10px 0 20px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .sub-title {
+      text-align: center;
+      font-size: 12px;
+      color: #747474;
+      margin-bottom: 20px;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .input {
+      border-radius: 20px;
+      border: 1px solid #c0c0c0;
+      padding: 12px 15px;
+      outline: none;
+    }
+
+    .form-btn {
+      padding: 10px 15px;
+      border-radius: 20px;
+      background-color: teal;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .form-btn:hover {
+      background-color: darkslategray;
+    }
+
+    .sign-up-label {
+      text-align: center;
+      font-size: 12px;
+      color: #747474;
+    }
+
+    .sign-up-link {
+      margin-left: 5px;
+      color: teal;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Google button styling */
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .google-login-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      background-color: white;
+      border: 1px solid #747474;
+      border-radius: 20px;
+      cursor: pointer;
+      gap: 10px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    }
+
+    .google-login-button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .google-icon {
+      width: 18px;
+      height: 18px;
+    }
+  </style>

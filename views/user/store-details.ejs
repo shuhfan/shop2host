@@ -1,0 +1,77 @@
+<div class="wrapper">
+    <%- include('../partials/dashboardMenu') %>
+
+    <div class="main" style="height: 100vh;">
+        <%- include('../partials/dashboardNav') %>
+
+        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+            <div class="container-fluid p-0">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-center">
+                        <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Store Details</h5>
+                    </div>
+                    <div class="card-body justify-content-center">
+                        <form action="/store-details" method="POST" enctype="multipart/form-data">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-12 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="mb-1 w-100">
+                                        <label class="form-label">Store Name</label>
+                                        <input type="text" class="form-control" name="storeName" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4 col-md-4 col-sm-12">
+                                    <div class="card-body text-center">
+                                        <img src="assets/img/all-images/no-pictures.png" alt="Store Logo" class="img-fluid mb-2" width="50" height="50">
+                                        <div>
+                                            <a class="btn btn-primary btn-sm upload-btn" href="#">Upload</a>
+                                            <input type="file" id="imageUpload" name="logo" accept="image/*" style="display: none;" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-header ps-0 d-flex justify-content-center">
+                                <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Contact Information</h5>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                    <div class="mb-1 w-100">
+                                        <label class="form-label">Address</label>
+                                        <input type="text" class="form-control" name="address" required>
+                                    </div>
+                                    <div class="mb-1 w-100">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                    <div class="mb-1 w-100">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" name="phone" required>
+                                    </div>
+                                    <div class="mb-1 w-100">
+                                        <label class="form-label">Whatsapp Number</label>
+                                        <input type="tel" class="form-control" name="whatsapp" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex justify-content-center gap-2">
+                                <a class="btn btn-primary" href="/create-store">Back</a>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include('../partials/dashboardFooter') %>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+
+<script>
+    document.querySelector('.upload-btn').addEventListener('click', function () {
+        document.getElementById('imageUpload').click();
+    });
+</script>

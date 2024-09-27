@@ -1,48 +1,197 @@
 <%- include('../partials/userHeader') %>
 
-<div class="contact1-section-area sp6" id="contact">
-  <div class="container">
-  
-    <div class="row">
-      
-  
-      <div class="col-lg-7 aos-init aos-animate" data-aos="zoom-out" data-aos-duration="1000">
-        <div class="contact-info-area">
-          
-          <img src="assets/img/bg/log.png" alt="">
-         
-        </div>
+
+<style>
+  /* Full Page Container */
+  .page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f0f0f0; /* Adjust background as necessary */
+  }
+
+  .form-container {
+    width: 350px;
+    height: auto; /* Remove fixed height to allow the form to adjust */
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 20px 30px;
+  }
+
+  .title {
+    text-align: center;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    margin: 10px 0 30px 0;
+    font-size: 28px;
+    font-weight: 800;
+  }
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 15px;
+  }
+
+  .input {
+    border-radius: 20px;
+    border: 1px solid #c0c0c0;
+    outline: 0 !important;
+    box-sizing: border-box;
+    padding: 12px 15px;
+  }
+
+  .page-link {
+    text-decoration: underline;
+    margin: 0;
+    text-align: end;
+    color: #747474;
+    text-decoration-color: #747474;
+  }
+
+  .page-link-label {
+    cursor: pointer;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .page-link-label:hover {
+    color: #000;
+  }
+
+  .form-btn {
+    padding: 10px 15px;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    border-radius: 20px;
+    border: 0 !important;
+    outline: 0 !important;
+    background: teal;
+    color: white;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+
+  .form-btn:active {
+    box-shadow: none;
+  }
+
+  .sign-up-label {
+    margin: 0;
+    font-size: 12px;
+    color: #747474;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  }
+
+  .sign-up-link {
+    margin-left: 1px;
+    font-size: 12px;
+    text-decoration: underline;
+    text-decoration-color: teal;
+    color: teal;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  }
+
+  .buttons-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 20px;
+    gap: 15px;
+  }
+
+
+  .google-login-button {
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 10px 15px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+      rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    gap: 5px;
+  }
+
+  .apple-login-button {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+  }
+
+  .google-login-button {
+    border: 2px solid #747474;
+  }
+
+  .apple-icon,
+  .google-icon {
+    font-size: 18px;
+    margin-bottom: 1px;
+  }
+</style>
+
+<div class="page-container">
+  <div class="form-container">
+    <p class="title">Welcome back</p>
+    <% if (message) { %>
+      <div class=" alert alert-danger text-center fw-bold pb-2">
+        <%= message %>
       </div>
-      <div class="col-lg-5 aos-init aos-animate card shadow-lg border-0 d-flex justify-content-center" data-aos="zoom-out" data-aos-duration="1200">
-          <div class="contact-boxarea m-1">
-            <h3 class="text-center">Login</h3>
-            <p class="text-center pb-3 fw-semibold text-secondary" >Login Your Account Here</p>
-            <form action="/login" method="POST">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Email</label >
-                    <input type="text" id="firstName" class="p-2 ms-0 m-2" name="email" placeholder="Email" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="input-area">
-                      <label class="fw-semibold">Password</label >
-                    <input type="password" id="password" class="p-2 ms-0 m-2" name="password" placeholder="Password" required="">
-                  </div>
-                </div>
-                <div class="col-lg-12 mt-2">
-                  <div class="input-area">
-                    <button type="submit" class="btn btn-primary w-100 rounded-3">Sign in</button>
-                  </div>
-                </div>
-                <div class="col-lg-12 p-2 text-center">
-                  Don't have account yet? <a class="text-primary fw-bold" href="/signup" tabindex="-1">Sign up</a>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
+      <% } %>
+    <form class="form" action="/login" method="POST">
+      <input type="email" class="input" placeholder="Email" name="email" required="">
+      
+      <input type="password" class="input" placeholder="Password" name="password" required="">
+
+      <p class="page-link">
+        <a href="#" class="page-link-label">Forgot Password?</a>
+      </p>
+      
+      <button type="submit" class="form-btn">Log in</button>
+    </form>
+
+    <p class="sign-up-label">
+      Don't have an account? 
+      <a href="/signup" class="sign-up-link">Sign up</a>
+    </p>
+
+    <div class="buttons-container">
+      
+
+      <a href="/auth/google" class="google-login-button">
+        <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px" y="0px"
+          class="google-icon" viewBox="0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
+c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.652,43.789,21.348,43.611,20.083z"></path>
+          <path fill="#FF3D00"
+            d="M6.305,14.691l6.571,4.818C14.48,16.858,18.9,14,24,14c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657 C34.046,6.053,29.268,4,24,4C16.319,4,9.436,8.336,6.305,14.691z">
+          </path>
+          <path fill="#4CAF50"
+            d="M24,44c5.129,0,9.788-1.962,13.293-5.172l-6.104-5.317C28.379,34.855,26.246,36,24,36c-5.192,0-9.606-3.33-11.263-7.988 l-6.555,5.049C10.068,39.634,16.612,44,24,44z">
+          </path>
+          <path fill="#1976D2"
+            d="M43.611,20.083H42V20H24v8h11.303c-0.793,2.24-2.173,4.196-3.932,5.713c0.002-0.002,0.003-0.003,0.005-0.005 l6.104,5.317C35.698,39.746,40,32.974,40,24C40,22.652,39.789,21.348,43.611,20.083z">
+          </path>
+        </svg>
+        <span>Log in with Google</span>
+      </a>
     </div>
   </div>
 </div>
