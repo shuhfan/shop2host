@@ -534,7 +534,22 @@ const loadSupport = (req,res)=>{
   }
 }
 
+const loadStoreManegment = async (req, res) => {
+  const userId = req.session.user_id; // Assuming you have user ID in session
+  let stores = [];
 
+  try {
+      // Fetch user's stores from the database
+      const [rows] = await db.query('SELECT * FROM stores WHERE user_id = ?', [userId]);
+      stores = rows; // Store the retrieved stores
+
+      // Render the dashboard with store data
+      res.render('store-management', { stores });
+  } catch (error) {
+      console.error('Error fetching stores:', error);
+      res.render('store-management', { stores: [] }); // Render with empty array on error
+  }
+}
 
 
 module.exports = {
@@ -570,7 +585,6 @@ module.exports = {
   saveOrder,
   loadOpenTicket,
   loadSupport,
+  loadStoreManegment,
 
 }
-
-// https://www.perplexity.ai/search/problem-hxo9Yya5TEOqoGDx6QcQ6g

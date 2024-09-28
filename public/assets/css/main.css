@@ -2981,7 +2981,7 @@ Location:
   z-index: 9999;
   padding: 16px 0;
   transition: all 0.4s;
-  background-color: #F6F8F9;
+  background: var(--ztc-text-text-1);
 }
 .homepage3-body .header-area.homepage3 nav#navbar-example2 {
   display: block;

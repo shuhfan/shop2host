@@ -62,6 +62,7 @@ user_router.get('/pricing-plan',auth.isLogin,userController.loadPricingPlan)
 user_router.get('/billing',auth.isLogin,userController.loadBilling)
 user_router.get('/openticket',auth.isLogin,userController.loadOpenTicket)
 user_router.get('/support',auth.isLogin,userController.loadSupport)
+user_router.get('/store-management',auth.isLogin,userController.loadStoreManegment)
 
 user_router.post('/signup',userController.signup)
 user_router.post('/login',userController.login)
