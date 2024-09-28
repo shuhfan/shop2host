@@ -48,7 +48,9 @@ user_router.get('/auth/google', passport.authenticate('google', {
 user_router.get('/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/login', 
 }), (req, res) => {
-  res.redirect('/dashboard'); 
+  console.log('User authenticated:', req.user);
+  console.log('Session Data:', req.session);
+    res.redirect(req.session.originalUrl || '/dashboard');
 });
 
 

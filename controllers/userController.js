@@ -249,7 +249,7 @@ const privacyPolicy = (req, res) => {
 }
 
 const loadDashboard = async (req, res) => {
-  const userId = req.session.user_id; // Assuming you have user ID in session
+  const userId = req.session.user_id || req.user.id; // Assuming you have user ID in session
   let stores = [];
 
   try {
@@ -347,7 +347,7 @@ const storeDetails = async (req, res) => {
   try {
     // Insert store details into the database
     const [result] = await db.query('INSERT INTO stores (user_id, name, logo, address, email, phone, whatsapp) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [req.session.user_id, storeName, logo, address, email, phone, whatsapp]);
+      [req.session.user_id || req.user.id, storeName, logo, address, email, phone, whatsapp]);
 
       req.session.store_id = result.insertId;
 
