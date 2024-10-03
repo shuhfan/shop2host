@@ -25,10 +25,10 @@
                                 <table class="table table-hover my-0">
                                     <thead>
                                         <tr>
-                                            <th>Product/Service</th>
+                                            <th>Domain</th>
                                             <th>Status</th>
                                             <th class="sty-col">Renewal cost</th>
-                                            <th class="sty-col">Billing Cycle</th>
+                                            <th class="sty-col"> plan</th>
                                             <th class="sty-col">Create Date</th>
                                             <th></th>
                                         </tr>
@@ -36,10 +36,10 @@
                                     <tbody>
                                         <% stores.forEach(store => { %>
                                             <tr>
-                                                <td><%= store.name %></td>
+                                                <td><%= store.domain_name %></td>
                                                 <td><span class="badge bg-lt-green text-success">Active</span></td>
-                                                <td><%= store.renewal_cost %> INR</td> 
-                                                <td><%= store.billing_cycle %></td>
+                                                <td><%= store.amount %> INR</td> 
+                                                <td><%= store.plan %></td>
                                                 <td>
                                                     <%= new Date(store.created_at).toLocaleDateString('en-US', {
                                                         year: 'numeric',

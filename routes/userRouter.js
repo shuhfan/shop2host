@@ -74,8 +74,9 @@ user_router.post('/find-domain',userController.findDomain)
 user_router.post('/save-new-domain',userController.saveNewDomain)
 user_router.post('/save-existing-domain',userController.existingDomain)
 user_router.post('/save-business-email',userController.saveBusinessEmail)
-user_router.post('/confirm-order',userController.saveOrder)
-
+user_router.post('/save-billing-details',userController.saveBillingDetails)
+user_router.post('/createOrder',userController.createOrder)
+user_router.post('/payment-success',userController.paymentSuccess )
 
 
 module.exports = user_router;

@@ -4,7 +4,7 @@
     <div class="main" style="height: 100vh;">
         <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+        <main class="content p-0" style=" overflow-x: hidden;">
             <div class="container-fluid p-0">
                 <div class="row align-items-center justify-content-center" style="height: 80vh;">
                     <div class="col-lg-6 col-md-8 col-sm-10 col-12 bg-white sh flex-column d-flex justify-content-center align-items-center p-4">
@@ -59,46 +59,53 @@
     </div>
 </div>
 
-<script src="/js/app.js"></script>
+
 
 <script>
-// JavaScript to handle the new domain search
-document.getElementById('searchButton').addEventListener('click', async function() {
-    const domainName = document.getElementById('domainName').value;
-    const selectedPlan = '<%= selectedPlan %>'; // Get the selected plan from EJS
-    const fullDomain = selectedPlan === 'lite' ? `${domainName}.in` : `${domainName}.com`;
-
-    // Make an API call to check the availability of the domain
-    const response = await fetch('/find-domain', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ domainName }),
+    // JavaScript to handle the new domain search
+    document.getElementById('searchButton').addEventListener('click', async function() {
+        const domainName = document.getElementById('domainName').value.trim(); // Get the domain name and trim whitespace
+        const selectedPlan = '<%= selectedPlan %>'; // Get the selected plan from EJS
+    
+        // Check if the domain name field is empty
+        if (!domainName) {
+            alert('Please enter a domain name before searching.'); // Alert user to enter a domain
+            return; // Exit the function if the field is empty
+        }
+    
+        const fullDomain = selectedPlan === 'lite' ? `${domainName}.in` : `${domainName}.com`;
+    
+        // Make an API call to check the availability of the domain
+        const response = await fetch('/find-domain', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ domainName }),
+        });
+    
+        const result = await response.json();
+    
+        // Update the UI based on the response
+        const availabilityMessage = document.getElementById('availabilityMessage');
+        if (result.isAvailable) {
+            availabilityMessage.innerHTML = `<span class='text-success fs-4 fw-semibold'>The domain ${fullDomain} is available!</span>`;
+            document.getElementById('saveNewDomainButton').classList.remove('d-none'); // Show save button
+            document.getElementById('saveNewDomainButton').onclick = function() {
+                // Save the available new domain
+                fetch('/save-new-domain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ domainName }),
+                }).then(() => {
+                    window.location.href = '/business-email'; // Redirect after saving
+                });
+            };
+        } else {
+            availabilityMessage.innerHTML = `<span class='text-danger fs-4 fw-semibold'>The domain ${fullDomain} is already registered!</span>`;
+            document.getElementById('saveNewDomainButton').classList.add('d-none'); // Hide save button
+        }
     });
-
-    const result = await response.json();
-
-    // Update the UI based on the response
-    const availabilityMessage = document.getElementById('availabilityMessage');
-    if (result.isAvailable) {
-        availabilityMessage.innerHTML = `<span class='text-success fs-4 fw-semibold'>The domain ${fullDomain} is available!</span>`;
-        document.getElementById('saveNewDomainButton').classList.remove('d-none'); // Show save button
-        document.getElementById('saveNewDomainButton').onclick = function() {
-            // Save the available new domain
-            fetch('/save-new-domain', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ domainName }),
-            }).then(() => {
-                window.location.href = '/business-email'; // Redirect after saving
-            });
-        };
-    } else {
-        availabilityMessage.innerHTML = `<span class='text-danger fs-4 fw-semibold'>The domain ${fullDomain} is already registered!</span>`;
-        document.getElementById('saveNewDomainButton').classList.add('d-none'); // Hide save button
-    }
-});
-</script>
+    </script>

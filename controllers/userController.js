@@ -4,8 +4,16 @@ const db = require('../config/db')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto');
 const nodemailer = require('nodemailer')
+const axios = require('axios');
 const dns = require('dns');
 const { log } = require('console');
+const Razorpay = require('razorpay');
+const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
+
+const razorpayInstance = new Razorpay({
+  key_id: RAZORPAY_ID_KEY,
+  key_secret: RAZORPAY_SECRET_KEY
+});
 
 
 const transporter = nodemailer.createTransport({
@@ -85,7 +93,7 @@ const loadLogin = (req, res, next) => {
 
 const loadSignup = (req, res, next) => {
   try {
-    res.render('signup',{message:''})
+    res.render('signup', { message: '' })
   } catch (error) {
     console.log(error.message);
 
@@ -98,7 +106,7 @@ const loadSignout = (req, res, next) => {
         console.error('Error while signing out:', err);
         return res.status(500).send('Error occurred during signout.');
       }
-  
+
       // Clear the cookie
       res.clearCookie('connect.sid'); // This clears the session ID cookie
       res.redirect('/login'); // Redirect to login page or any other page after signout
@@ -193,7 +201,7 @@ const login = async (req, res, next) => {
     // Check if there’s an original URL stored in the session
     const redirectUrl = req.session.originalUrl || '/dashboard'; // Redirect to original URL or default to dashboard
     console.log(req.session.originalUrl);
-    
+
     // Clear the original URL after use
     delete req.session.originalUrl;
 
@@ -253,15 +261,28 @@ const loadDashboard = async (req, res) => {
   let stores = [];
 
   try {
-      // Fetch user's stores from the database
-      const [rows] = await db.query('SELECT * FROM stores WHERE user_id = ?', [userId]);
-      stores = rows; // Store the retrieved stores
+      const [rows] = await db.query(`
+          SELECT 
+              s.id AS store_id,
+              s.name AS store_name,
+              s.logo AS store_logo,
+              COUNT(o.id) AS total_orders
+          FROM 
+              stores s
+          LEFT JOIN 
+              orders o ON s.id = o.store_id AND o.user_id = ?
+          WHERE 
+              s.user_id = ?
+          GROUP BY 
+              s.id, s.name, s.logo
+      `, [userId, userId]); // Assuming stores are linked to users by user_id
 
-      // Render the dashboard with store data
+      stores = rows; 
+
       res.render('dashboard', { stores });
   } catch (error) {
       console.error('Error fetching stores:', error);
-      res.render('dashboard', { stores: [] }); // Render with empty array on error
+      res.render('dashboard', { stores: [] });
   }
 }
 
@@ -299,7 +320,7 @@ const loadFindDomain = (req, res) => {
 
 const loadBusinessEmail = (req, res) => {
   try {
-    res.render('business-email',{ selectedDomain: req.session.selectedDomain})
+    res.render('business-email', { selectedDomain: req.session.selectedDomain })
   } catch (error) {
     console.log(error.message);
 
@@ -315,6 +336,7 @@ const loadPricingPlan = (req, res) => {
   }
 }
 
+// In createStore function
 const createStore = async (req, res) => {
   const { productType, experience, productCount } = req.body;
 
@@ -324,17 +346,27 @@ const createStore = async (req, res) => {
   }
 
   try {
-    await db.query('INSERT INTO store_info (user_id, product_type, experience, product_count) VALUES (?, ?, ?, ?)',
-      [req.session.user_id, productType, experience, productCount]);
+    // Initialize storeDetails if it doesn't exist
+    if (!req.session.storeDetails) {
+      req.session.storeDetails = {}; // Create the object if it doesn't exist
+    }
 
-    // Redirect to the next step (e.g., domain availability check)
+    // Combine details in session
+    req.session.storeDetails.productInfo = {
+      productType,
+      experience,
+      productCount
+    };
+
+    // Redirect to the next step (e.g., store details)
     res.redirect('/store-details');
   } catch (error) {
-    console.error('Error saving store details:', error);
+    console.error('Error saving store info in session:', error);
     res.status(500).render('create-store', { message: 'An error occurred while saving your details.' });
   }
 }
 
+// In storeDetails function
 const storeDetails = async (req, res) => {
   const { storeName, address, email, phone, whatsapp } = req.body;
   const logo = req.file ? req.file.filename : null;
@@ -345,16 +377,26 @@ const storeDetails = async (req, res) => {
   }
 
   try {
-    // Insert store details into the database
-    const [result] = await db.query('INSERT INTO stores (user_id, name, logo, address, email, phone, whatsapp) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [req.session.user_id || req.user.id, storeName, logo, address, email, phone, whatsapp]);
+    // Initialize storeDetails if it doesn't exist
+    if (!req.session.storeDetails) {
+      req.session.storeDetails = {}; // Create the object if it doesn't exist
+    }
 
-      req.session.store_id = result.insertId;
+    // Combine details in session
+    req.session.storeDetails.details = {
+      userId: req.session.user_id || req.user.id,
+      name: storeName,
+      logo: logo,
+      address: address,
+      email: email,
+      phone: phone,
+      whatsapp: whatsapp
+    };
 
     // Redirect to the next step (e.g., domain availability check)
     res.redirect('/find-domain');
   } catch (error) {
-    console.error('Error saving store details:', error);
+    console.error('Error saving store details in session:', error);
     res.status(500).render('store-details', { message: 'An error occurred while saving your details.' });
   }
 }
@@ -367,170 +409,135 @@ const findDomain = async (req, res) => {
   let isAvailable = false;
 
   if (fullDomain) {
-      dns.lookup(fullDomain, (err) => {
-          if (err) {
-              // Domain is available
-              isAvailable = true;
-          }
+    dns.lookup(fullDomain, (err) => {
+      if (err) {
+        // Domain is available
+        isAvailable = true;
+      }
 
-          // Respond with JSON data for front-end handling
-          res.json({ isAvailable });
-      });
+      // Respond with JSON data for front-end handling
+      res.json({ isAvailable });
+    });
   } else {
-      res.status(400).json({ message: "Please enter a valid domain name." });
+    res.status(400).json({ message: "Please enter a valid domain name." });
   }
 }
 
-const saveNewDomain =  async (req, res) => {
+const saveNewDomain = async (req, res) => {
   const { domainName } = req.body;
   const selectedPlan = req.session.plan;
   const fullDomain = selectedPlan === 'lite' ? `${domainName}.in` : `${domainName}.com`;
 
-  const storeId = req.session.store_id;
-
   try {
-      // Save the new domain to the database with is_existing set to false
-      const [result] = await db.query('INSERT INTO domains (store_id, domain_name, is_existing) VALUES (?, ?, ?)', 
-          [storeId, fullDomain, false]);
-          req.session.selectedDomain = fullDomain;
-
-      res.status(200).json({ message: 'Domain saved successfully!' });
+    if (!req.session.storeDetails) {
+      req.session.storeDetails = {}; // Create the object if it doesn't exist
+    }
+    req.session.storeDetails.selectedDomain = fullDomain;
+    res.status(200).json({ message: 'Domain saved successfully!' });
   } catch (error) {
-      console.error('Error saving new domain:', error);
-      res.status(500).json({ message: 'An error occurred while saving your new domain.' });
+    console.error('Error saving new domain:', error);
+    res.status(500).json({ message: 'An error occurred while saving your new domain.' });
   }
 }
 
-const existingDomain =  async (req, res) => {
+const existingDomain = async (req, res) => {
   const { existingDomainName } = req.body;
-  
-  const storeId = req.session.store_id; // Ensure this is set when creating a store
-
-  if (!storeId) {
-      return res.status(400).render('find-domain', { 
-          message: 'Store ID is not available. Please create a store first.',
-          isAvailable: false,
-          selectedPlan: req.session.plan 
-      });
-  }
-
   try {
-      // Save the existing domain to the database with is_existing set to true
-      await db.query('INSERT INTO domains (store_id, domain_name, is_existing) VALUES (?, ?, ?)', 
-          [storeId, existingDomainName, true]);
-          req.session.selectedDomain = existingDomainName;
-      // Redirect to the business email page
-      res.redirect('/business-email');
+    if (!req.session.storeDetails) {
+      req.session.storeDetails = {}; // Create the object if it doesn't exist
+    }
+    req.session.storeDetails.selectedDomain = existingDomainName;
+    res.redirect('/business-email');
   } catch (error) {
-      console.error('Error saving existing domain:', error);
-      res.render('find-domain', { 
-          message: 'An error occurred while saving your existing domain.',
-          isAvailable: false,
-          selectedPlan: req.session.plan 
-      });
+    console.error('Error saving existing domain:', error);
+    res.render('find-domain', {
+      message: 'An error occurred while saving your existing domain.',
+      isAvailable: false,
+      selectedPlan: req.session.plan
+    });
   }
 }
 
 const saveBusinessEmail = async (req, res) => {
   const { subdomain } = req.body;
-  const storeId = req.session.store_id; // Ensure this is set when creating a store
-
-  // Construct the full email address
-  const selectedDomain = req.session.selectedDomain || 'shop2host.com'; // Fallback domain if not set
+  if (!req.session.storeDetails) {
+    req.session.storeDetails = {}; // Create the object if it doesn't exist
+  }
+  const selectedDomain = req.session.storeDetails.selectedDomain || 'shop2host.com'; // Fallback domain if not set
   const fullEmail = `${subdomain}@${selectedDomain}`;
 
-  try {
-      // Save the business email to the database
-      await db.query('INSERT INTO business_emails (store_id, email) VALUES (?, ?)', 
-          [storeId, fullEmail]);
+  req.session.storeDetails.businessEmail = fullEmail;
 
-      // Redirect or render success message
-      res.redirect('/ecommerce-demo'); // Change this to your desired redirect page after saving
-  } catch (error) {
-      console.error('Error saving business email:', error);
-      res.render('business-email', { 
-          message: 'An error occurred while saving your business email.',
-          selectedDomain: req.session.selectedDomain // Pass back the selected domain
-      });
-  }
+  res.redirect('/ecommerce-demo');
 }
 
 const loadEcommerceDemo = async (req, res) => {
-  const storeId = req.session.store_id; // Get the store ID from the session
   let storeData;
 
   try {
-      // Fetch store details from the database
-      const [rows] = await db.query('SELECT name, logo, phone, email, address FROM stores WHERE id = ?', [storeId]);
-      storeData = rows[0]; // Get the first row of data
-console.log(storeData);
+    // Check if store details are available in the session
+    if (req.session.storeDetails && req.session.storeDetails.details) {
+      // Use data from session
+      const details = req.session.storeDetails.details;
+      storeData = {
+        name: details.name || 'Sample Store', // Fallback name
+        logo: details.logo || 'logo.png', // Fallback logo
+        phone: details.phone || '123-456-7890', // Fallback contact number
+        email: details.email || 'info@samplestore.com', // Fallback email
+        address: details.address
+      };
+    } else {
+      // Default sample data if no session data is available
+      storeData = {
+        name: 'Sample Store',
+        logo: 'logo.png', // Dummy logo
+        phone: '123-456-7890',
+        email: 'info@samplestore.com',
+        address: '123 Sample St, Sample City'
+      };
+    }
 
-      // If no data found, use dummy data
-      if (!storeData) {
-          storeData = {
-              store_name: 'Sample Store',
-              logo: 'https://via.placeholder.com/150', // Dummy logo
-              contact_number: '123-456-7890',
-              email: 'info@samplestore.com'
-          };
-      }
-
-      // Render the e-commerce index page with the store data
-      res.render('ecommerce-demo', { store: storeData , layout: false });
+    // Render the e-commerce index page with the store data
+    res.render('ecommerce-demo', { store: storeData, layout: false });
   } catch (error) {
-      console.error('Error fetching store data:', error);
-      res.render('ecommerce-demo', {
-          store: {
-              store_name: 'Sample Store',
-              logo: 'https://via.placeholder.com/150',
-              contact_number: '123-456-7890',
-              email: 'info@samplestore.com'
-          }
-      });
+    console.error('Error fetching store data:', error);
+    // Render with default sample data in case of error
+    res.render('ecommerce-demo', {
+      store: {
+        name: 'Sample Store',
+        logo: 'logo.png',
+        phone: '123-456-7890',
+        email: 'info@samplestore.com',
+        address: '123 Sample St, Sample City'
+      }
+    });
   }
 }
 
-const loadBilling = (req,res)=>{
+const loadBilling = (req, res) => {
   try {
     res.render('billing')
   } catch (error) {
     console.log(error.message);
-    
+
   }
 }
 
-const saveOrder =  async (req, res) => {
-  const storeId = req.session.store_id || 8;
-  const { name, email, phone, address, state, country, pin_code } = req.body;
-
-  try {
-      // Save personal details, billing address, and store ID to the database
-      await db.query('INSERT INTO orders (name, email, phone, address, state, country, pin_code, store_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-          [name, email, phone, address, state, country, pin_code, storeId]);
-
-      // Redirect or render success message
-      res.redirect('/dashboard');
-  } catch (error) {
-      console.error('Error saving order:', error);
-      res.render('error', { message: 'An error occurred while saving your order.' });
-  }
-}
-
-const loadOpenTicket = (req,res)=>{
+const loadOpenTicket = (req, res) => {
   try {
     res.render('open-ticket')
   } catch (error) {
     console.log(error.message);
-    
+
   }
 }
 
-const loadSupport = (req,res)=>{
+const loadSupport = (req, res) => {
   try {
     res.render('view-ticket')
   } catch (error) {
     console.log(error.message);
-    
+
   }
 }
 
@@ -539,17 +546,166 @@ const loadStoreManegment = async (req, res) => {
   let stores = [];
 
   try {
-      // Fetch user's stores from the database
-      const [rows] = await db.query('SELECT * FROM stores WHERE user_id = ?', [userId]);
-      stores = rows; // Store the retrieved stores
+    // Fetch user's stores from the database
+    const [rows] = await db.query('SELECT * FROM stores WHERE user_id = ?', [userId]);
+    stores = rows; // Store the retrieved stores
 
-      // Render the dashboard with store data
-      res.render('store-management', { stores });
+    // Render the dashboard with store data
+    res.render('store-management', { stores });
   } catch (error) {
-      console.error('Error fetching stores:', error);
-      res.render('store-management', { stores: [] }); // Render with empty array on error
+    console.error('Error fetching stores:', error);
+    res.render('store-management', { stores: [] }); // Render with empty array on error
   }
 }
+
+const saveBillingDetails = (req, res) => {
+  try {
+    const { name, email, phone, address, state, country, pin_code } = req.body;
+
+    // Initialize storeDetails if it doesn't exist
+    if (!req.session.storeDetails) {
+      req.session.storeDetails = {}; // Create the object if it doesn't exist
+    }
+
+    // Save billing details in session
+    req.session.storeDetails.billingDetails = {
+      name,
+      email,
+      phone,
+      address,
+      state,
+      country,
+      pin_code
+    };
+
+    // Send a structured JSON response back to the client
+    res.status(200).json({ success: true, msg: 'Billing details saved successfully.' });
+  } catch (error) {
+    console.error('Error saving billing details:', error.message); // Log the error message
+    res.status(500).json({ success: false, msg: 'Failed to save billing details.' }); // Send error response
+  }
+};
+
+const createOrder = async (req, res) => {
+  try {
+    // Extract necessary details from session
+    const { amount } = req.session; // Assuming amount is already in paise
+    const { name, email, phone } = req.session.storeDetails.billingDetails; // Corrected to access billing details from storeDetails
+    const { productInfo, details } = req.session.storeDetails;
+
+    // Set up the order options for Razorpay
+    const options = {
+      amount: amount * 100, // Convert to paise if needed
+      currency: 'INR',
+      receipt: `receipt#${Date.now()}`, // Unique receipt ID
+      notes: {
+        productType: productInfo.productType,
+        experience: productInfo.experience,
+        productCount: productInfo.productCount,
+        userId: details.userId,
+        storeName: details.name,
+        address: details.address,
+        email: email,
+        phone: phone,
+        whatsapp: details.whatsapp
+      }
+    };
+
+    // Create an order with Razorpay
+    razorpayInstance.orders.create(options, (err, order) => {
+      if (!err) {
+        // Send a successful response back to the client
+        res.status(200).json({
+          success: true,
+          msg: 'Order Created',
+          order_id: order.id,
+          amount: options.amount,
+          key_id: RAZORPAY_ID_KEY, // Your Razorpay key ID
+          product_name: productInfo.productType, // Example product name
+          description: `Order for ${details.name}`, // Example description
+          contact: phone,
+          email: email
+        });
+      } else {
+        // Handle errors during order creation
+        console.error('Razorpay Order Creation Error:', err);
+        res.status(400).json({ success: false, msg: 'Something went wrong!' });
+      }
+    });
+  } catch (error) {
+    console.error('Error creating order:', error.message);
+    res.status(500).json({ success: false, msg: 'Internal Server Error' });
+  }
+};
+
+const paymentSuccess = async (req, res) => {
+  const { orderId, paymentId } = req.body;
+
+  // Retrieve billing and store details from session
+  const { name, email: billingEmail, phone, address, state, country, pin_code } = req.session.storeDetails.billingDetails; // Accessing billing details
+  const { selectedDomain, businessEmail } = req.session.storeDetails; // Accessing store details
+  const { productType, experience, productCount } = req.session.storeDetails.productInfo; // Accessing product info
+  
+  const userId = req.session.user_id || req.user.id; // Accessing user ID
+  const plan = req.session.plan; // Accessing plan
+  const amount = parseInt(req.session.amount,10) || 0; // Accessing amount
+
+  // Additional details from session
+  const { logo, whatsapp } = req.session.storeDetails.details; // Accessing additional details
+  const storeName = req.session.storeDetails.details.name; // Accessing store name
+
+  try {
+      // Step 1: Insert or get the store ID
+      let storeId;
+      const [storeRows] = await db.query('SELECT id FROM stores WHERE name = ?', [storeName]);
+
+      if (storeRows.length > 0) {
+          // Store exists; use its ID
+          storeId = storeRows[0].id;
+      } else {
+          // Store does not exist; insert it
+          const [result] = await db.query(
+              'INSERT INTO stores (name, logo, address, email, phone, whatsapp, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              [storeName || '', logo || '', address || '', billingEmail || '', phone || '', whatsapp || '', userId]
+          );
+          storeId = result.insertId; // Get the new store ID
+      }
+
+
+      // Step 2: Save order details into the orders table with user ID
+      await db.query(
+          'INSERT INTO orders (order_id, payment_id, user_id, store_id, name, email, phone, address, state, country, pin_code, domain_name, business_email, product_type, experience, product_count, plan, amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+              orderId,
+              paymentId,
+              userId || null,         
+              storeId,
+              name || '',
+              billingEmail || '',
+              phone || '',
+              address || '',
+              state || '',
+              country || '',
+              pin_code || '',
+              selectedDomain || '',
+              businessEmail || '',
+              productType || '',
+              experience || '',
+              productCount || '',
+              plan || '',
+              amount
+          ]
+      );
+
+      // Clear session data if needed or keep it for future reference
+      delete req.session.storeDetails;
+
+      res.json({ success: true }); // Send success response back to client
+  } catch (error) {
+      console.error('Error saving order details:', error); // Log error message for debugging
+      res.status(500).json({ success: false }); // Send error response back to client
+  }
+};
 
 
 module.exports = {
@@ -582,9 +738,10 @@ module.exports = {
   saveBusinessEmail,
   loadEcommerceDemo,
   loadBilling,
-  saveOrder,
   loadOpenTicket,
   loadSupport,
   loadStoreManegment,
-
+  saveBillingDetails,
+  createOrder,
+  paymentSuccess,
 }

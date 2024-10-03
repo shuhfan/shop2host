@@ -1,81 +1,182 @@
 <div class="wrapper">
     <%- include('../partials/dashboardMenu') %>
 
-    <div class="main" style="height: 100vh;">
-        <%- include('../partials/dashboardNav') %>
+        <div class="main" style="height: 100vh;">
+            <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
-            <div class="container-fluid p-0">
-                <div class="card">
-                    <form action="/confirm-order" method="POST"> <!-- Form starts here -->
-                        <div class="card-header d-flex justify-content-center">
-                            <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Personal Details</h5>
+                <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+                    <div class="container p-0">
+                        <div class="card">
+                            <form class="pay-form"> <!-- Ensure this form has the class pay-form -->
+                                <div class="card-header d-flex justify-content-center">
+                                    <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Personal Details
+                                    </h5>
+                                </div>
+                                <div class="card-body justify-content-center">
+                                    <!-- Personal details inputs -->
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">Name</label>
+                                                <input type="text" name="name" class="form-control"
+                                                    placeholder="Enter your name" required>
+                                            </div>
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">Phone</label>
+                                                <input type="tel" name="phone" class="form-control"
+                                                    placeholder="Enter your phone number" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" name="email" class="form-control"
+                                                    placeholder="Enter your email" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Billing address inputs -->
+                                    <div class="card-header ps-0 d-flex justify-content-center">
+                                        <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Billing Address
+                                        </h5>
+                                    </div>
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">Address</label>
+                                                <input type="text" name="address" class="form-control"
+                                                    placeholder="Enter your address" required>
+                                            </div>
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">State</label>
+                                                <input type="text" name="state" class="form-control"
+                                                    placeholder="Enter your state" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-5 col-md-5 col-sm-12">
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">Country</label>
+                                                <input type="text" name="country" class="form-control"
+                                                    placeholder="Enter your country" required>
+                                            </div>
+                                            <div class="mb-1 w-100">
+                                                <label class="form-label">PIN Code</label>
+                                                <input type="text" name="pin_code" class="form-control"
+                                                    placeholder="Enter your PIN code" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="card-body d-flex justify-content-center gap-2">
+                                    <a class="btn btn-primary" href="/ecommerce-demo">Back</a>
+                                    <!-- Submit button for saving changes -->
+                                    <button type="submit" id="confirmOrderButton" class="btn btn-primary">Confirm
+                                        Order</button>
+                                </div>
+
+                            </form> <!-- Form ends here -->
                         </div>
-                        <div class="card-body justify-content-center">
-                            <div class="row d-flex justify-content-center">
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">Phone</label>
-                                        <input type="tel" name="phone" class="form-control" placeholder="Enter your phone number" required>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12"></div>
-                            </div>
+                    </div>
+                </main>
 
-                            <div class="card-header ps-0 d-flex justify-content-center">
-                                <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12">Billing Address</h5>
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">Address</label>
-                                        <input type="text" name="address" class="form-control" placeholder="Enter your address" required>
-                                    </div>
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">State</label>
-                                        <input type="text" name="state" class="form-control" placeholder="Enter your state" required>
-                                    </div>  
-                                </div>
-                                <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">Country</label>
-                                        <input type="text" name="country" class="form-control" placeholder="Enter your country" required>
-                                    </div>
-                                    <div class="mb-1 w-100">
-                                        <label class="form-label">PIN Code</label>
-                                        <input type="text" name="pin_code" class="form-control" placeholder="Enter your PIN code" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="card-body d-flex justify-content-center gap-2">
-                            <a class="btn btn-primary" href="/ecommerce-demo">Back</a>
-                            <!-- Submit button for saving changes -->
-                            <button type="submit" class="btn btn-primary">Confirm Order</button> 
-                        </div>
-
-                    </form> <!-- Form ends here -->
-                </div>
-            </div>
-        </main>
-
-        <%- include('../partials/dashboardFooter') %>
-    </div>
+                <%- include('../partials/dashboardFooter') %>
+        </div>
 </div>
 
-<script src="/js/app.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    // JavaScript for Razorpay payment integration
+    $(document).ready(function(){
+    $('.pay-form').submit(function(e){
+        e.preventDefault(); // Prevent default form submission
+
+        var formData = $(this).serialize(); // Serialize form data
+
+        // First save billing details in session
+        $.ajax({
+            url: "/save-billing-details", // Your backend route to save billing details
+            type: "POST",
+            data: formData,
+            success: function(res) {
+                console.log('Response from save-billing-details:', res); // Log response for debugging
+                if (res.success) {
+                    // Proceed to create Razorpay order after saving billing details
+                    $.ajax({
+                        url: "/createOrder", // Your backend route to create an order
+                        type: "POST",
+                        data: formData,
+                        success: function(res) {
+                            console.log('Response from createOrder:', res); // Log response for debugging
+                            if (res.success) {
+                                var options = {
+                                    "key": res.key_id || '', // Fallback in case of undefined
+                                    "amount": res.amount || 0, // Fallback in case of undefined
+                                    "currency": "INR",
+                                    "name": res.product_name || 'Product', // Fallback product name
+                                    "description": res.description || 'Purchase Description', // Fallback description
+                                    "image": "https://dummyimage.com/600x400/000/fff", // Optional logo
+                                    "order_id": res.order_id || '', // Fallback in case of undefined
+                                    "handler": function(response) {
+                                        alert("Payment Succeeded");
+
+                                        $.ajax({
+                                            url: "/payment-success", 
+                                            type: "POST",
+                                            data: {
+                                                orderId: res.order_id,
+                                                paymentId: response.razorpay_payment_id,
+                                                ...formData // Include all billing data
+                                            },
+                                            success: function(paymentResponse) {
+                                                if (paymentResponse.success) {
+                                                    window.location.href = '/dashboard'; 
+                                                } else {
+                                                    alert('Payment processing failed!');
+                                                }
+                                            }
+                                        });
+                                    },
+                                    "prefill": {
+                                        "contact": res.contact || '', // Fallback in case of undefined
+                                        "name": res.name || '', // Fallback in case of undefined
+                                        "email": res.email || '' // Fallback in case of undefined
+                                    },
+                                    "notes": {
+                                        "description": res.description || '' // Fallback in case of undefined
+                                    },
+                                    "theme": {
+                                        "color": "#2300a3"
+                                    }
+                                };
+                                var razorpayObject = new Razorpay(options);
+                                razorpayObject.on('payment.failed', function(response) {
+                                    alert("Payment Failed");
+                                });
+                                razorpayObject.open(); 
+                            } else {
+                                alert(res.msg || 'Order creation failed!'); // Show error message if order creation failed
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Error creating order:', xhr.responseText);
+                            alert('Failed to create order. Please try again.');
+                        }
+                    });
+                } else {
+                    alert(res.msg || 'Failed to save billing details!!!!!'); // Show error message if saving billing details failed
+                }
+            },
+            error: function(xhr) {
+                console.error('Error saving billing details:', xhr.responseText);
+                alert('Failed to save billing details. Please try again.');
+            }
+        });
+    });
+});
+</script>

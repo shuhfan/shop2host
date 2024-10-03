@@ -2,7 +2,7 @@
     <%- include('../partials/dashboardMenu') %>
 
     <div class="main" style="height: 100vh;">
-        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+        <main class="content p-0" style=" overflow-x: hidden;">
             <%- include('../partials/dashboardNav') %>
             <div class="container-fluid p-0">
                 <div class="row align-items-center justify-content-center" style="height: 80vh;">
@@ -15,7 +15,7 @@
                                     <input type="text" class="form-control" name="subdomain" placeholder="subdomain" autocomplete="off" required>
                                     <span class="input-group-text">
                                         <% if (selectedDomain) { %>
-                                            <%= selectedDomain %>
+                                            @<%= selectedDomain %>
                                         <% } else { %>
                                             @shop2host.com
                                         <% } %>
