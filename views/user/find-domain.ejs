@@ -1,80 +1,100 @@
 <div class="wrapper">
     <%- include('../partials/dashboardMenu') %>
 
-    <div class="main" style="height: 100vh;">
-        <%- include('../partials/dashboardNav') %>
+        <div class="main" style="height: 100vh;">
+            <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style=" overflow-x: hidden;">
-            <div class="container-fluid p-0">
-                <div class="row align-items-center justify-content-center" style="height: 80vh;">
-                    <div class="col-lg-6 col-md-8 col-sm-10 col-12 bg-white sh flex-column d-flex justify-content-center align-items-center p-4">
-                        <h2 class="d-flex justify-content-center text-muted mb-3">Check Domain Availability</h2>
-                        
-                        <!-- Form for entering an existing domain -->
-                        <form action="/save-existing-domain" method="POST">
-                            <div class="mb-4">
-                                <h5>Do you already have a domain?</h5>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" name="existingDomainName" placeholder="Enter your existing domain name (without extension)" aria-label="Existing Domain Name" required>
-                                    <button class="btn btn-primary" type="submit">Save Domain</button>
+                <main class="content p-0" style=" overflow-x: hidden;">
+                    <div class="container-fluid p-0">
+                        <div class="row align-items-center justify-content-center" style="height: 80vh;">
+                            <div
+                                class="col-lg-6 col-md-8 col-sm-10 col-12 bg-white sh flex-column d-flex justify-content-center p-4">
+                                <h2 class="d-flex justify-content-center text-muted mb-3">Check Domain Availability</h2>
+
+                                <!-- Form for entering an existing domain -->
+                                <form action="/save-existing-domain" method="POST">
+                                    <div class="mb-4">
+                                        <h5>Do you already have a domain?</h5>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="existingDomainName"
+                                                placeholder="Enter your existing domain name (with extension)"
+                                                aria-label="Existing Domain Name" required>
+                                            <button class="btn btn-success" type="submit">Save Domain</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <!-- Form for entering a new domain -->
+                                <form id="new-domain-form">
+                                    <div class="mb-4">
+                                        <h5>Enter a new domain name:</h5>
+                                        <div class="input-group mb-3">
+                                            <% if (selectedPlan==='lite' ) { %>
+                                                <input type="text" id="domainName" class="form-control"
+                                                    name="domainName" placeholder="Enter your desired domain name"
+                                                    aria-label="Domain Name" required>
+                                                <span class="input-group-text">.in</span>
+                                                <% } else { %>
+                                                    <input type="text" id="domainName" class="form-control"
+                                                        name="domainName" placeholder="Enter your desired domain name"
+                                                        aria-label="Domain Name" required>
+                                                    <span class="input-group-text">.com</span>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Search button for new domain -->
+                                    <button id="searchButton" type="button" class="btn btn-primary">Search New
+                                        Domain</button>
+                                </form>
+
+                                <!-- Message Display -->
+                                <div id="availabilityMessage" class="mt-3"></div>
+
+                                <!-- Save button for available new domain -->
+                                <button id="saveNewDomainButton" class="btn btn-success mt-2 d-none">Save
+                                    Domain</button>
+
+                                <!-- Navigation Buttons -->
+                                <div class="d-flex justify-content-center gap-2 mt-3">
+                                    <a href="/store-details" type="submit" id="anim-btn" class="anim-buton-sty">
+                                        <p class="anim-btn-text" style="padding: 5%;font-weight: 600;">Back</p>
+                                        <div class="checkbox">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="5"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-arrow-left align-middle fw-bold">
+                                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                                <polyline points="12 19 5 12 12 5"></polyline>
+                                            </svg>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
-                        </form>
-
-                        <!-- Form for entering a new domain -->
-                        <form id="new-domain-form">
-                            <div class="mb-4">
-                                <h5>Or, enter a new domain name:</h5>
-                                <div class="input-group mb-3">
-                                    <% if (selectedPlan === 'lite') { %>
-                                        <input type="text" id="domainName" class="form-control" name="domainName" placeholder="Enter your desired domain name" aria-label="Domain Name" required>
-                                        <span class="input-group-text">.in</span>
-                                    <% } else { %>
-                                        <input type="text" id="domainName" class="form-control" name="domainName" placeholder="Enter your desired domain name" aria-label="Domain Name" required>
-                                        <span class="input-group-text">.com</span>
-                                    <% } %>
-                                </div>
-                            </div>
-
-                            <!-- Search button for new domain -->
-                            <button id="searchButton" type="button" class="btn btn-primary">Search New Domain</button>
-                        </form>
-
-                        <!-- Message Display -->
-                        <div id="availabilityMessage" class="mt-3"></div>
-
-                        <!-- Save button for available new domain -->
-                        <button id="saveNewDomainButton" class="btn btn-primary mt-2 d-none">Save Domain</button>
-
-                        <!-- Navigation Buttons -->
-                        <div class="d-flex justify-content-center gap-2 mt-3">
-                            <a class="btn btn-primary" href="/store-details">Back</a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </main>
+                </main>
 
-        <%- include('../partials/dashboardFooter') %>
-    </div>
+                <%- include('../partials/dashboardFooter') %>
+        </div>
 </div>
 
 
 
 <script>
     // JavaScript to handle the new domain search
-    document.getElementById('searchButton').addEventListener('click', async function() {
+    document.getElementById('searchButton').addEventListener('click', async function () {
         const domainName = document.getElementById('domainName').value.trim(); // Get the domain name and trim whitespace
         const selectedPlan = '<%= selectedPlan %>'; // Get the selected plan from EJS
-    
+
         // Check if the domain name field is empty
         if (!domainName) {
             alert('Please enter a domain name before searching.'); // Alert user to enter a domain
             return; // Exit the function if the field is empty
         }
-    
+
         const fullDomain = selectedPlan === 'lite' ? `${domainName}.in` : `${domainName}.com`;
-    
+
         // Make an API call to check the availability of the domain
         const response = await fetch('/find-domain', {
             method: 'POST',
@@ -83,15 +103,15 @@
             },
             body: JSON.stringify({ domainName }),
         });
-    
+
         const result = await response.json();
-    
+
         // Update the UI based on the response
         const availabilityMessage = document.getElementById('availabilityMessage');
         if (result.isAvailable) {
             availabilityMessage.innerHTML = `<span class='text-success fs-4 fw-semibold'>The domain ${fullDomain} is available!</span>`;
             document.getElementById('saveNewDomainButton').classList.remove('d-none'); // Show save button
-            document.getElementById('saveNewDomainButton').onclick = function() {
+            document.getElementById('saveNewDomainButton').onclick = function () {
                 // Save the available new domain
                 fetch('/save-new-domain', {
                     method: 'POST',
@@ -108,4 +128,4 @@
             document.getElementById('saveNewDomainButton').classList.add('d-none'); // Hide save button
         }
     });
-    </script>
+</script>

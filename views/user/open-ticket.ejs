@@ -1,70 +1,55 @@
 <div class="wrapper">
-    <%-include('../partials/dashboardMenu')%>
-
+    <%- include('../partials/dashboardMenu') %>
     <div class="main" style="height: 100vh;">
-        <%-include('../partials/dashboardNav')%>
-
-        <main class="content p-0" style="overflow: scroll;overflow-x: hidden;" >
-            <div class="container-fluid p-0" >
-                <div class="card-header ps-0 d-flex justify-content-center">
+        <%- include('../partials/dashboardNav') %>
+        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+            <div class="container-fluid p-0">
+                <div class="card-header ps-0 d-flex justify-content-center text-center">
                     <h5 class="card-title mb-0 col-12 col-lg-10 col-md-10 col-sm-12 mt-3">Add a Ticket</h5>
                 </div>
-                <div class="row d-flex justify-content-center mt-4">
-                    <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                        
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" placeholder="Disabled input" >
-                        </div>
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Subject</label>
-                            <input type="text" class="form-control" placeholder="Disabled input" >
-                        </div>
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Priority</label>
-                            <select class="form-select">
-                                <option value="">--Select--</option>
-                                <option value="">1</option>
-                                <option value="">2</option>
-                                <option value="">3</option>
-                            </select>
-                        </div>
+                <form action="/support-ticket" method="POST" enctype="multipart/form-data" class="m-2">
+                    <div class="mb-4 w-100">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" required placeholder="Subject">
                     </div>
-                    <div class="col-12 col-lg-5 col-md-5 col-sm-12">
-                        
-                        
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Email</label>
-                            <input type="text" class="form-control" placeholder="Disabled input" >
-                        </div>
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Related Service</label>
-                            <select class="form-select">
-                                <option value="">--Select--</option>
-                                <option value="">1</option>
-                                <option value="">2</option>
-                                <option value="">3</option>
-                            </select>
-                        </div>
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Attachments</label>
-                            <input type="file" class="form-control" placeholder="Disabled input" >
-                        </div>
+                    <div class="mb-4 w-100">
+                        <label class="form-label">Priority</label>
+                        <select name="priority" class="form-select" required>
+                            <option value="">--Select--</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
                     </div>
-                    <div class="col-12 col-lg-10 col-md-10 col-sm-12">
-                        <div class="mb-1 w-100">
-                            <label class="form-label">Messages</label>
-                            <textarea class="form-control" rows="5" style="height: 100px;" placeholder="Textarea"></textarea>
-                        </div>
+                    <div class="mb-4 w-100">
+                        <label class="form-label">Related Service</label>
+                        <select name="related_service" class="form-select" required>
+                            <option value="">--Select--</option>
+                            <% if (domains && domains.length > 0) { %>
+                                <% domains.forEach(domain => { %>
+                                    <option value="<%= domain.domain_name %>"><%= domain.domain_name %></option>
+                                <% }); %>
+                            <% } else { %>
+                                <option value="">No domains available</option>
+                            <% } %>
+                        </select>
                     </div>
-                </div>
-                </div>
-            </main>
-
-           
-            
-            <%-include('../partials/dashboardFooter')%>
+                    <div class="mb-4 w-100">
+                        <label class="form-label">Messages</label>
+                        <textarea name="message" class="form-control" rows="5" required placeholder="Your message"></textarea>
                     </div>
-                </div>
-            
-                <script src="js/app.js"></script>
+                
+                    <!-- File Attachment Field -->
+                    <div class="mb-4 w-100">
+                        <label class="form-label">Image</label>
+                        <input type="file" name="attachments" class="form-control" accept="image/*">
+                    </div>
+                
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Submit Ticket</button>
+                </form>
+            </div>
+        </main>
+        <%- include('../partials/dashboardFooter') %> 
+    </div> 
+</div> 

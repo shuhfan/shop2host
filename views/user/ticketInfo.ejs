@@ -1,0 +1,127 @@
+<div class="wrapper">
+    <%- include('../partials/dashboardMenu') %>
+
+        <div class="main" style="height: 100vh;">
+            <%- include('../partials/dashboardNav') %>
+
+            <main class="content" style="overflow: scroll; overflow-x: hidden;">
+                <div class="container-fluid">
+                    <h1>Ticket #<%= ticket.id %>: <%= ticket.subject %></h1>
+            
+                    <p><strong>Status:</strong> <span class="<%= ticket.status === 'Answered' ? 'badge bg-success' : 'badge bg-warning' %>"><%= ticket.status %></span></p>
+                    <p><strong>Message:</strong> <%= ticket.message %></p>
+            
+                    <% if (ticket.attachment) { %>
+                        <div class="attachment">
+                            <h5>Uploaded Attachment:</h5>
+                            <img src="/uploads/<%= ticket.attachment %>" alt="Ticket Attachment Image">
+                        </div>
+                    <% } %>
+            
+                    <h2>Replies</h2>
+                    <ul class="replies-list">
+                        <% replies.forEach(reply => { %>
+                            <li>
+                                <strong><%= reply.isAdmin === 0 ? 'You' : 'Admin' %>:</strong>
+                                <%= reply.reply %> (<%= reply.created_at.toISOString().slice(0, 19).replace('T', ' ') %>)
+                            </li>
+                        <% }); %>
+                    </ul>
+            
+                    <form action="/support-ticket/<%= ticket.id %>/reply" method="POST" class="reply-form">
+                        <textarea name="reply" required placeholder="Your reply..."></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+            
+                    <a class="back-link" href="/support">Back to Your Tickets</a>
+                </div>
+            </main>
+            
+
+                <%- include('../partials/dashboardFooter') %>
+        </div>
+</div>
+
+<style>
+
+.container-fluid {
+    max-width: 800px;
+
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.attachment img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.replies-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.replies-list li {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.reply-form {
+    margin-top: 20px;
+}
+
+.reply-form textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    resize: none;
+}
+
+.reply-form button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reply-form button:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+</style>

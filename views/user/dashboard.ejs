@@ -4,7 +4,7 @@
     <div class="main" style="height: 100vh;">
         <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style="overflow: scroll;  overflow-x: hidden;">
+        <main class="content p-0" style="overflow: scroll;">
             <div class="container-fluid p-0">
                 <% if (stores.length === 0) { %> 
                     <div class="row align-items-center justify-content-center" style="height: 80vh;">
@@ -29,25 +29,26 @@
                                             <th>Status</th>
                                             <th class="sty-col">Renewal cost</th>
                                             <th class="sty-col"> plan</th>
-                                            <th class="sty-col">Create Date</th>
+                                            <!-- <th class="sty-col">Create Date</th> -->
+                                            <th class="sty-col">Action </th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% stores.forEach(store => { %>
+                                        <% orders.forEach(order => { %>
                                             <tr>
-                                                <td><%= store.domain_name %></td>
+                                                <td><%= order.domain_name %></td>
                                                 <td><span class="badge bg-lt-green text-success">Active</span></td>
-                                                <td><%= store.amount %> INR</td> 
-                                                <td><%= store.plan %></td>
-                                                <td>
-                                                    <%= new Date(store.created_at).toLocaleDateString('en-US', {
+                                                <td><%= order.amount %> INR</td> 
+                                                <td><%= order.plan %></td>
+                                                <!-- <td>
+                                                    <%= new Date(order.created_at).toLocaleDateString('en-US', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
                                                     }) %>
-                                                </td> 
-                                                <td><a href="/store/<%= store.id %>" class="btn btn-primary">View</a></td>
+                                                </td>  -->
+                                                <td><a href="" class="btn btn-primary">View</a></td>
                                             </tr>
                                         <% }); %>
                                     </tbody>

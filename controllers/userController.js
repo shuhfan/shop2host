@@ -257,7 +257,8 @@ const privacyPolicy = (req, res) => {
 }
 
 const loadDashboard = async (req, res) => {
-  const userId = req.session.user_id || req.user.id; // Assuming you have user ID in session
+  const userId = req.session.user_id || req.user.id;
+    const [orders] = await db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
   let stores = [];
 
   try {
@@ -279,21 +280,22 @@ const loadDashboard = async (req, res) => {
 
       stores = rows; 
 
-      res.render('dashboard', { stores });
+      res.render('dashboard', { stores,orders });
   } catch (error) {
       console.error('Error fetching stores:', error);
       res.render('dashboard', { stores: [] });
   }
 }
 
-const loadCreateStore = (req, res) => {
+const loadCreateStore = async(req, res) => {
   try {
     const selectedPlan = req.query.plan;
     const amount = req.query.amount;
 
     req.session.plan = selectedPlan;
     req.session.amount = amount;
-    res.render('create-store')
+    const [categories] = await db.query('SELECT * FROM categories');
+    res.render('create-store',{categories})
   } catch (error) {
     console.log(error.message);
 
@@ -320,7 +322,7 @@ const loadFindDomain = (req, res) => {
 
 const loadBusinessEmail = (req, res) => {
   try {
-    res.render('business-email', { selectedDomain: req.session.selectedDomain })
+    res.render('business-email', { selectedDomain: req.session.storeDetails.selectedDomain })
   } catch (error) {
     console.log(error.message);
 
@@ -523,18 +525,27 @@ const loadBilling = (req, res) => {
   }
 }
 
-const loadOpenTicket = (req, res) => {
+const loadOpenTicket = async(req, res) => {
   try {
-    res.render('open-ticket')
+    const userId = req.session.user_id || req.user.id;
+    const [domains] = await db.query('SELECT DISTINCT domain_name FROM orders WHERE user_id = ?', [userId]);
+    res.render('open-ticket', { domains })
   } catch (error) {
     console.log(error.message);
-
+    res.render('open-ticket', { domains:[] })
   }
 }
 
-const loadSupport = (req, res) => {
+const loadSupport = async(req, res) => {
   try {
-    res.render('view-ticket')
+    const userId = req.session.user_id || req.user.id;
+    const [tickets] = await db.query('SELECT * FROM tickets WHERE user_id = ?', [userId]);
+
+    for (let ticket of tickets) {
+        const [replies] = await db.query('SELECT * FROM replies WHERE ticket_id = ?', [ticket.id]);
+        ticket.replies = replies;
+    }
+    res.render('view-ticket', { tickets })
   } catch (error) {
     console.log(error.message);
 
@@ -696,7 +707,24 @@ const paymentSuccess = async (req, res) => {
               amount
           ]
       );
+      await db.query(
+        'INSERT INTO transactions (user_id, domain_name, amount, status) VALUES (?, ?, ?, ?)',
+        [userId, selectedDomain , amount, 'Completed']
+    );
 
+    const mailOptions = {
+      from: process.env.EMAIL, // Sender's email address
+      to: billingEmail, // Recipient's email address (user's email)
+      subject: 'Store Purchase Confirmation',
+      text: `Dear ${name},\n\nThank you for purchasing the store "${storeName}".\n\nTransaction Details:\n- Amount: $${amount.toFixed(2)}\n- Order ID: ${orderId}\n- Payment ID: ${paymentId}\n\nIf you have any questions or need assistance, feel free to contact us.\n\nBest regards,\nYour Company Name`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          return console.log('Error sending email:', error);
+      }
+      console.log('Email sent:', info.response);
+  });
       // Clear session data if needed or keep it for future reference
       delete req.session.storeDetails;
 
@@ -707,6 +735,104 @@ const paymentSuccess = async (req, res) => {
   }
 };
 
+const supportTicket = async (req, res) => {
+  const { subject, priority, related_service, message } = req.body;
+  const attachmentPath = req.file ? req.file.filename : null; // Handle file upload
+  const userId = req.session.user_id || req.user.id; // Get user ID from session
+
+  try {
+    console.log({ userId, subject, priority, related_service, message, attachmentPath });
+      // Insert ticket into the database
+      await db.query(
+          'INSERT INTO tickets (user_id, subject, priority, related_service, message, attachment) VALUES (?, ?, ?, ?, ?, ?)',
+          [userId, subject, priority, related_service, message, attachmentPath]
+      );
+
+      res.redirect('/support'); 
+  } catch (error) {
+      console.error('Error submitting ticket:', error);
+      res.status(500).send('Internal Server Error');
+  }
+}
+
+const loadTicket = async (req, res) => {
+  const ticketId = req.params.ticketId;
+  const userId = req.session.user_id || req.user.id
+    try {
+        const [ticket] = await db.query('SELECT * FROM tickets WHERE id = ?', [ticketId]);
+        const [replies] = await db.query('SELECT * FROM replies WHERE ticket_id = ?', [ticketId]);
+        
+        if (ticket.length > 0) {
+            res.render('ticketInfo', { ticket: ticket[0], replies, userId }); // Render ticket details with replies
+        } else {
+            res.status(404).send('Ticket not found');
+        }
+        
+    } catch (error) {
+        console.error('Error fetching ticket details:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+const ticketReplay = async (req, res) => {
+  const ticketId = req.params.ticketId;
+  const { reply } = req.body;
+
+  try {
+      // Insert the reply into the database
+      await db.query(
+          'INSERT INTO replies (ticket_id, reply) VALUES (?, ?)',
+          [ticketId, reply]
+      );
+
+      // Optionally update the status of the ticket if needed
+      await db.query(
+          'UPDATE tickets SET status = ? WHERE id = ?',
+          ['Answered', ticketId]
+      );
+
+      res.redirect(`/support-ticket/${ticketId}`); // Redirect back to the specific ticket's detail page
+  } catch (error) {
+      console.error('Error replying to ticket:', error);
+      res.status(500).send('Internal Server Error');
+  }
+}
+
+const loadTransactions = async(req,res,next)=>{
+  try {
+    const userId = req.session.user_id || req.user.id;
+    const [transactions] = await db.query('SELECT * FROM transactions WHERE user_id = ?', [userId]);
+    res.render('transactions',{transactions})
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
+
+// Reply to a ticket
+const replyToTicket = async (req, res) => {
+  const { reply } = req.body;
+  const ticketId = req.params.ticketId;
+  const userId = req.session.user_id; // Assuming user ID is stored in session
+  
+  try {
+
+    const isAdmin = await db.query('SELECT isAdmin FROM users WHERE id = ?',[userId])
+      await db.query(
+          'INSERT INTO replies (ticket_id, user_id, reply) VALUES (?, ?, ?)',
+          [ticketId, isAdmin, reply]
+      );
+      await db.query(
+        'UPDATE tickets SET status = ? WHERE id = ?',
+        ['Pending', ticketId]
+    );
+      res.redirect(`/support-ticket/${ticketId}`); // Redirect back to the specific ticket's detail page
+  } catch (error) {
+      console.error('Error replying to ticket:', error);
+      res.status(500).send('Internal Server Error');
+  }
+};
 
 module.exports = {
   loadHome,
@@ -744,4 +870,9 @@ module.exports = {
   saveBillingDetails,
   createOrder,
   paymentSuccess,
+  supportTicket,
+  loadTicket,
+  ticketReplay,
+  loadTransactions,
+  replyToTicket,
 }

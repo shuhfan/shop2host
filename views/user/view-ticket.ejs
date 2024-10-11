@@ -1,59 +1,55 @@
 <div class="wrapper">
-    <%-include('../partials/dashboardMenu')%>
+    <%- include('../partials/dashboardMenu') %>
 
     <div class="main" style="height: 100vh;">
-        <%-include('../partials/dashboardNav')%>
+        <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style="overflow: scroll;overflow-x: hidden;" >
-            <div class="container-fluid p-0" >
+        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+            <div class="container-fluid p-0">
                 <div class="card flex-fill mb-0">
                     <div class="card-header">
-                        <div class="tabs-area text-center">
-                            <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                              <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="pill" type="button" >All</button>
-                              </li>
-                              <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="pill" type="button" >Open</button>
-                              </li>
-                              <li class="nav-item" role="presentation">
-                                <button class="nav-link"  data-bs-toggle="pill"  type="button" >Answered</button>
-                              </li>
-                            </ul>
-                          </div>
+                        <h5 class="card-title mb-0">My Tickets</h5>
                     </div>
                 </div>
-            <div class="col-12 col-lg-12 col-xxl-12 d-flex">
-                <div class="card flex-fill w-100 overflow-scroll">
-                    <table class="table table-hover my-0">
-                        <thead>
-                            <tr class="bg7">
-                                <th>Ticket</th>
-                                <th >Subject</th>
-                                <th >Status</th>
-                                <th>Department</th>
-                                <th >Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#526710</td>
-                                <td class="sty-col">Mail Not working properly</td>
-                                <td ><span class="badge bg-warning ms-1">Answered</span> </td>
-                                <td class="sty-col">General Category</td>
-                                <td class="sty-col">2024-09-01 11:28:56</td>
-                            </tr>
-                            
-                            
-                        </tbody>
-                    </table>
+                <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+                    <div class="card flex-fill w-100 overflow-scroll">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Date</th>
+                                    <th>Action</th> <!-- New Action Column -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (tickets && tickets.length > 0) { %>
+                                    <% tickets.forEach(ticket => { %>
+                                        <tr>
+                                            <td>#<%= ticket.id %></td>
+                                            <td><%= ticket.subject %></td>
+                                            <td><span class="<%= ticket.status === 'Answered' ? 'badge bg-success' : 'badge bg-warning' %>"><%= ticket.status %></span></td> <!-- Conditional styling -->
+                                            <td><%= ticket.priority %></td>
+                                            <td><%= ticket.created_at.toISOString().slice(0, 19).replace('T', ' ') %></td>
+
+                                            <!-- View Button -->
+                                            <td><a href="/support-ticket/<%= ticket.id %>" class="btn btn-info">View</a></td> <!-- Link to view details -->
+                                        </tr>
+                                    <% }); %> 
+                                <% } else { %> 
+                                    <tr><td colspan="6" class="text-center">No tickets found.</td></tr> 
+                                <% } %> 
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
-                </div>
-            </main>
-           
-            <%-include('../partials/dashboardFooter')%>
-                    </div>
-                </div>
-            
-                <script src="js/app.js"></script>
+
+        </main>
+
+        <%- include('../partials/dashboardFooter') %> 
+    </div> 
+</div> 

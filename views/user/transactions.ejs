@@ -1,0 +1,52 @@
+<div class="wrapper">
+    <%- include('../partials/dashboardMenu') %>
+
+    <div class="main" style="height: 100vh;">
+        <%- include('../partials/dashboardNav') %>
+
+        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+            <div class="container-fluid p-0">
+                <div class="card flex-fill mb-0">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">My Transactions</h5>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-12 col-xxl-12 d-flex">
+                    <div class="card flex-fill w-100 ">
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Store</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (transactions && transactions.length > 0) { %>
+                                    <% transactions.forEach(transaction => { %>
+                                        <tr>
+                                            <td>#<%= transaction.id %></td>
+                                            <td><%= transaction.store_id %></td> <!-- You might want to fetch the store name from the stores table -->
+                                            <td><%= transaction.amount %></td>
+                                            <td><span class="<%= transaction.status === 'Completed' ? 'badge bg-success' : 'badge bg-warning' %>"><%= transaction.status %></span></td> <!-- Conditional styling -->
+                                            <td><%= transaction.created_at.toISOString().slice(0, 19).replace('T', ' ') %></td>
+                                           </tr>
+                                    <% }); %> 
+                                <% } else { %> 
+                                    <tr><td colspan="6" class="text-center">No transactions found.</td></tr> 
+                                <% } %> 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <%- include('../partials/dashboardFooter') %> 
+    </div> 
+</div> 

@@ -1,61 +1,89 @@
 <div class="wrapper">
     <%- include('../partials/dashboardMenu') %>
 
-    <div class="main" style="height: 100vh;">
-        <%- include('../partials/dashboardNav') %>
+        <div class="main" style="height: 100vh;">
+            <%- include('../partials/dashboardNav') %>
 
-        <main class="content p-0" style=" overflow-x: hidden;">
-            <div class="container-fluid p-0">
-                <div class="row align-items-center justify-content-center" style="height: 80vh;">
-                    <div class="col-lg-5 col-md-5 col-sm-12 col-12 bg-white sh flex-column d-flex justify-content-center align-items-center">
-                        <h4 class="p-3 mt-2 fw-semibold">Tell us about your business</h4>
+                <main class="content p-0" style=" overflow-x: hidden;">
+                    <div class="container-fluid p-0">
+                        <div class="row align-items-center justify-content-center" style="height: 80vh;">
+                            <div
+                                class="col-lg-5 col-md-5 col-sm-12 col-12 bg-white sh flex-column d-flex justify-content-center align-items-center">
+                                <h4 class="p-3 mt-2 fw-semibold">Tell us about your business</h4>
 
-                        <form action="/create-store" method="POST">
-                            <!-- Product Type Selection -->
-                            <div class="p-3 w-100">
-                                <label class="form-label fw-semibold">What are you planning to sell on the website?</label>
-                                <select name="productType" class="form-select" required>
-                                    <option value="">--Select--</option>
-                                    <option value="Digital Products">Digital Products</option>
-                                    <option value="Dresses">Dresses</option>
-                                    <option value="Other">Other</option>
-                                </select>
+                                <form action="/create-store" method="POST">
+                                    <!-- Product Type Selection -->
+                                    <div class="p-3 w-100">
+                                        <label class="form-label fw-semibold">What are you planning to sell on the website?</label>
+                                        <select name="productType" class="form-select" required>
+                                            <option value="">--Select--</option>
+                                            <% if (categories && categories.length > 0) { %>
+                                                <% categories.forEach(category => { %>
+                                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <option value="">No categories available</option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+
+                                    <!-- Experience Selection -->
+                                    <div class="p-3 w-100">
+                                        <label class="form-label fw-semibold">Do you have any experience?</label>
+                                        <select name="experience" class="form-select" required>
+                                            <option value="">--Select--</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Product Count Selection -->
+                                    <div class="p-3 w-100">
+                                        <label class="form-label fw-semibold">Total count of the products you
+                                            sell?</label>
+                                        <select name="productCount" class="form-select" required>
+                                            <option value="">--Select--</option>
+                                            <option value="1-10">1-10</option>
+                                            <option value="10-100">10-100</option>
+                                            <option value="100 above">100 above</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="col-12 m-2 d-flex justify-content-center gap-2">
+                                        <a href="/pricing-plan" id="anim-btn" class="anim-buton-sty">
+                                            <p class="anim-btn-text" style="padding: 5%;font-weight: 600;">Back</p>
+                                            <div class="checkbox">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-arrow-left align-middle fw-bold">
+                                                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                                                    <polyline points="12 19 5 12 12 5"></polyline>
+                                                </svg>
+                                            </div>
+                                        </a>
+
+                                        <button type="submit" id="anim-btn" class="anim-buton-sty">
+                                            <p class="anim-btn-text" style="padding: 5%;font-weight: 600;">Next</p>
+                                            <div class="checkbox">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-arrow-right align-middle ms-2">
+                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                                </svg>
+                                            </div>
+                                        </button>
+
+                                    </div>
+                                </form>
                             </div>
-
-                            <!-- Experience Selection -->
-                            <div class="p-3 w-100">
-                                <label class="form-label fw-semibold">Do you have any experience?</label>
-                                <select name="experience" class="form-select" required>
-                                    <option value="">--Select--</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-
-                            <!-- Product Count Selection -->
-                            <div class="p-3 w-100">
-                                <label class="form-label fw-semibold">Total count of the products you sell?</label>
-                                <select name="productCount" class="form-select" required>
-                                    <option value="">--Select--</option>
-                                    <option value="1-10">1-10</option>
-                                    <option value="10-100">10-100</option>
-                                    <option value="100 above">100 above</option>
-                                </select>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="col-12 m-2 d-flex justify-content-end gap-2">
-                                <a class="btn btn-primary" href="/dashboard">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Next</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </main>
+                </main>
 
-        <%- include('../partials/dashboardFooter') %>
-    </div>
+                <%- include('../partials/dashboardFooter') %>
+        </div>
 </div>
-
-<script src="/js/app.js"></script>

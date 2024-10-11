@@ -12,7 +12,7 @@ passport.use(new GoogleStrategy({
         : '/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        const [rows] = await db.query('SELECT * FROM users WHERE google_id = ?', [profile.id]);
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [profile.emails[0].value]);
         if (rows.length > 0) {
             return done(null, rows[0]); // User already exists
         } else {
