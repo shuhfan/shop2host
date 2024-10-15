@@ -26,7 +26,7 @@
             </li>
 
             <li class="mb-1 sidebar-item">
-                <a class="btn btn-toggle   rounded border-0 text-start px-4 collapsed sty-font1">
+                <a href="https://start.drift.com/login" target="_blank" class="btn btn-toggle   rounded border-0 text-start px-4 collapsed sty-font1">
                     <i class="fa-solid fa-headset text-dark fs-4 me-3"></i><span class="fs-4">Live chat support</span>
                 </a>
             </li>
@@ -38,19 +38,19 @@
                 </a>
             </li>
             <li class="mb-1 sidebar-item">
-                <a class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
+                <a href="https://shop2host.com:2096" target="_blank" class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
                     <i class="fa-solid fa-envelope text-dark  fs-4 me-3"></i><span class="fs-4">Mail inbox</span>
                 </a>
             </li>
             <li class="mb-1 sidebar-item">
-                <a class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
+                <a href="/admin/orders" class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
                     <i class="fa-solid fa-bag-shopping text-dark  fs-4 me-3"></i><span class="fs-4">Orders</span>
                 </a>
             </li>
             <li class="mb-1 sidebar-item">
-                <a class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
-                    <i class="fa-regular fa-file-code text-dark  fs-4 me-3"></i><span class="fs-4">website
-                        Maintenance</span>
+                <a href="#" class="btn btn-toggle rounded border-0 text-start px-4 collapsed sty-font1" onclick="toggleMaintenanceMode()">
+                    <i class="fa-regular fa-file-code text-dark fs-4 me-3"></i>
+                    <span class="fs-4">Website Maintenance</span>
                 </a>
             </li>
         </ul>
@@ -58,3 +58,27 @@
 
 </nav>
 <link rel="stylesheet" href="/assets/css/app.css">
+
+
+<script>
+    function toggleMaintenanceMode() {
+    const isEnabled = confirm("Do you want to enable maintenance mode?");
+
+    fetch('/admin/maintenance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ maintenanceMode: isEnabled }),
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Maintenance mode updated successfully.');
+            location.reload(); // Reload the page to reflect changes
+        } else {
+            alert('Failed to update maintenance mode.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>

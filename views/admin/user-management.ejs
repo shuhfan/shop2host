@@ -31,7 +31,7 @@
                                         <td class="sty-col"><%= user.name %></td>
                                         <td><span class=""><%= user.email %></span></td> 
                                         <td class="sty-col"><%= user.phone %></td> 
-                                        <td class="sty-col"><%= user.orders || 0 %></td>
+                                        <td class="sty-col"><%= user.order_count || 0 %></td>
                                         <td class="sty-col"><%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %> at 
                                             <%= new Date(user.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td> 
                                         <td class="sty-col">

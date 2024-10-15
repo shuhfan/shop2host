@@ -34,15 +34,18 @@ admin_router.get('/',auth.isLogin,adminController.loadDashboard)
 admin_router.get('/login',auth.isLogout,adminController.loadAdminLogin)
 admin_router.get('/signout',auth.isLogin,adminController.signOut)
 admin_router.get('/category',auth.isLogin,adminController.loadAddCategory)
+admin_router.get('/orders',auth.isLogin,adminController.loadOrders)
 admin_router.get('/user-management',auth.isLogin,adminController.loadUserManagement)
+
 admin_router.get('/tickets',auth.isLogin,adminController.loadTickets)
 admin_router.get('/ticket/:ticketId',auth.isLogin,adminController.openTicket)
 
+admin_router.patch('/admin/orders/:id/status',auth.isLogin, adminController.updateOrderStatus);
 
 admin_router.post('/login',auth.isLogout,adminController.adminLogin)
 admin_router.post('/add-category',auth.isLogin,adminController.addCategory)
 admin_router.post('/delete-category/:id',auth.isLogin,adminController.deleteCategory)
 admin_router.post('/delete-user/:id',auth.isLogin,adminController.deleteUser)
-admin_router.post('/tickets/reply/:ticketId',auth.isLogin,adminController.ticketReplay)
-
+admin_router.post('/support-ticket/:ticketId/reply',auth.isLogin,adminController.ticketReplay)
+admin_router.post('/admin/maintenance',auth.isLogin,adminController.changeMaintenanceMode)
 module.exports = admin_router

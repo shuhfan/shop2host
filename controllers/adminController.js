@@ -10,8 +10,11 @@ const loadDashboard = async (req, res) => {
         const [orderCountResult] = await db.query('SELECT COUNT(*) AS totalOrders FROM orders');
         const totalOrders = orderCountResult[0].totalOrders;
 
+        const [result] = await db.query('SELECT SUM(amount) AS total_amount FROM orders');
+        const totalAmount = result[0].total_amount || 0;
+
         // Render admin dashboard with user and order counts
-        res.render('dashboard', { totalUsers, totalOrders });
+        res.render('dashboard', { totalUsers, totalOrders, totalAmount });
     } catch (error) {
         console.error('Error fetching data:', error);
         res.render('error', { message: 'An error occurred while fetching admin data.' });
@@ -143,10 +146,42 @@ const deleteCategory = async (req, res) => {
     }
 }
 
+const loadOrders = async(req,res,next)=>{
+    try {
+        const [orders] = await db.query('SELECT * FROM orders ORDER BY created_at DESC');
+        res.render('orders',{orders})
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+const updateOrderStatus = async (req, res) => {
+    const orderId = req.params.id;
+    const { status } = req.body; // Get new status from request body
+
+    try {
+        const [result] = await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.status(200).render('orders');
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 const loadUserManagement =  async (req, res) => {
     try {
-        const [users] = await db.query('SELECT * FROM users'); 
-
+        const [users] = await db.query(`
+            SELECT u.*, COUNT(o.id) AS order_count 
+            FROM users u
+            LEFT JOIN orders o ON u.id = o.user_id
+            GROUP BY u.id
+        `); 
         res.render('user-management', { users });
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -190,13 +225,16 @@ const ticketReplay = async (req, res) => {
     const { reply } = req.body;
     const adminId = req.session.admin_id;
     try {
-        // Insert the reply into the replies table
+        const [rows] = await db.query('SELECT isAdmin FROM users WHERE id = ?', [adminId]);
+        const isAdmin = rows[0].isAdmin;
+        console.log(ticketId, isAdmin, reply);
+
+
         await db.query(
             'INSERT INTO replies (ticket_id, user_id, reply) VALUES (?, ?, ?)',
-            [ticketId, adminId, reply]
+            [ticketId, isAdmin, reply]
         );
 
-        // Update the ticket status to 'Answered'
         await db.query(
             'UPDATE tickets SET status = ? WHERE id = ?',
             ['Answered', ticketId]
@@ -227,6 +265,12 @@ const openTicket =  async (req, res) => {
     }
 };
 
+const changeMaintenanceMode = (req, res) => {
+    const { maintenanceMode: isEnabled } = req.body;
+    maintenanceMode = isEnabled; 
+    res.status(200).send('Maintenance mode updated');
+}
+
 module.exports = {
     loadDashboard,
     loadAdminLogin,
@@ -235,9 +279,12 @@ module.exports = {
     loadAddCategory,
     addCategory,
     deleteCategory,
+    loadOrders,
+    updateOrderStatus,
     loadUserManagement,
     deleteUser,
     loadTickets,
     ticketReplay,
     openTicket,
+    changeMaintenanceMode,
 }

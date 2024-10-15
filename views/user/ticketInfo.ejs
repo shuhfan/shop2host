@@ -22,7 +22,7 @@
                     <ul class="replies-list">
                         <% replies.forEach(reply => { %>
                             <li>
-                                <strong><%= reply.isAdmin === 0 ? 'You' : 'Admin' %>:</strong>
+                                <strong><%= reply.user_id === 0 ? 'You' : 'Admin' %>:</strong>
                                 <%= reply.reply %> (<%= reply.created_at.toISOString().slice(0, 19).replace('T', ' ') %>)
                             </li>
                         <% }); %>

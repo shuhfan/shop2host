@@ -38,7 +38,15 @@
                                         <% orders.forEach(order => { %>
                                             <tr>
                                                 <td><%= order.domain_name %></td>
-                                                <td><span class="badge bg-lt-green text-success">Active</span></td>
+                                                <td>
+                                                    <% if (order.status === 'Active') { %>
+                                                        <span class="badge bg-lt-green text-success">Active</span>
+                                                    <% } else if (order.status === 'Pending') { %>
+                                                        <span class="badge bg-yellow text-warning">Pending</span>
+                                                    <% } else if (order.status === 'Cancelled') { %>
+                                                        <span class="badge bg-red text-danger">Cancelled</span>
+                                                    <% } %>
+                                                </td>
                                                 <td><%= order.amount %> INR</td> 
                                                 <td><%= order.plan %></td>
                                                 <!-- <td>

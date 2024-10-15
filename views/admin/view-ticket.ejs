@@ -22,18 +22,18 @@
                     <ul class="replies-list">
                         <% replies.forEach(reply => { %>
                             <li>
-                                <strong><%= reply.isAdmin === 0 ? 'You' : 'Admin' %>:</strong>
+                                <strong><%= reply.user_id === 0 ? 'You' : 'Admin' %>:</strong>
                                 <%= reply.reply %> (<%= reply.created_at.toISOString().slice(0, 19).replace('T', ' ') %>)
                             </li>
                         <% }); %>
                     </ul>
             
-                    <form action="/support-ticket/<%= ticket.id %>/reply" method="POST" class="reply-form">
+                    <form action="/admin/support-ticket/<%= ticket.id %>/reply" method="POST" class="reply-form">
                         <textarea name="reply" required placeholder="Your reply..."></textarea>
                         <button type="submit">Reply</button>
                     </form>
             
-                    <a class="back-link" href="/support">Back to Your Tickets</a>
+                    <a class=" back-link" href="/support">Back to Your Tickets</a>
                 </div>
             </main>
             

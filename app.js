@@ -5,6 +5,7 @@ const logger = require('morgan');
 const createError = require('http-errors');
 const dotenv = require('dotenv').config();
 const expressLayouts = require('express-ejs-layouts')
+let maintenanceMode = false;
 
 const userRouter = require('./routes/userRouter');
 const adminRouter = require('./routes/adminRouter');
@@ -30,9 +31,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.post('/admin/maintenance', (req, res) => {
+  const { maintenanceMode: isEnabled } = req.body;
+  maintenanceMode = isEnabled; // Update the variable based on the request
+  res.status(200).send('Maintenance mode updated');
+});
+
+function checkMaintenanceMode(req, res, next) {
+  if (maintenanceMode && !req.path.startsWith('/admin')) {
+      return res.render('maintenance'); // Render a maintenance page
+  }
+  next(); // Proceed to the next middleware or route handler
+}
+
+// Use this middleware in your app
+app.use(checkMaintenanceMode);
+
 // Routes
 app.use('/', userRouter);
 app.use('/admin',adminRouter);
+
 
 
 // Catch 404 and forward to error handler
@@ -40,15 +58,6 @@ app.use((req, res, next) => {
   next(res.render('error'));
 });
 
-// Error handler
-// app.use((err, req, res, next) => {
-//   // Set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-//   // Render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
 
 module.exports = app;

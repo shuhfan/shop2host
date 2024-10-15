@@ -137,11 +137,11 @@
                                 if (res.success) {
                                     var options = {
                                         "key": res.key_id || '', // Fallback in case of undefined
-                                        "amount": res.amount || 0, // Fallback in case of undefined
+                                        "amount": res.amount* 1.025 || 0, // Fallback in case of undefined
                                         "currency": "INR",
-                                        "name": res.product_name || 'Product', // Fallback product name
+                                        "name":  'Shop2Host', // Fallback product name res.product_name ||
                                         "description": res.description || 'Purchase Description', // Fallback description
-                                        "image": "https://dummyimage.com/600x400/000/fff", // Optional logo
+                                        "image": "https://shop2host.com/assets/img/logo/logo.png", // Optional logo
                                         "order_id": res.order_id || '', // Fallback in case of undefined
                                         "handler": function (response) {
 
@@ -157,8 +157,6 @@
                                                 success: function (paymentResponse) {
                                                     if (paymentResponse.success) {
                                                         window.location.href = '/dashboard';
-                                                    } else {
-                                                        alert('Payment processing failed!');
                                                     }
                                                 }
                                             });
@@ -177,7 +175,7 @@
                                     };
                                     var razorpayObject = new Razorpay(options);
                                     razorpayObject.on('payment.failed', function (response) {
-                                        alert("Payment Failed");
+                                        
                                     });
                                     razorpayObject.open();
                                 } else {

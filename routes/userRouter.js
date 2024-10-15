@@ -18,8 +18,10 @@ const userController = require('../controllers/userController')
 
 user_router.use((req, res, next)=> {
     const currentUrl = req.originalUrl;
+    res.locals.pathname = req.path;
     if (!req.session.user_id && req.method === 'GET' &&  !['/login', '/signup'].includes(currentUrl)) {
       req.session.originalUrl = req.originalUrl; 
+      
     }
     next();
   })

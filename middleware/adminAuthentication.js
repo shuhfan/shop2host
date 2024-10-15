@@ -1,6 +1,6 @@
 const isLogin = async (req,res,next)=>{
     try{
-        if(req.session.admin_id || req.isAuthenticated()){
+        if(req.session.admin_id){
             next()
         }else{
             res.render('adminLogin',{message:''})

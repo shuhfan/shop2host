@@ -155,7 +155,7 @@ const signup = async (req, res) => {
       subject: 'Email Verification - Shop2Host',
       html: `<p>Hi ${name},</p>
                <p>Thank you for registering. Please verify your email by clicking the link below:</p>
-               <a href="${verificationLink}">Verify Email</a>`,
+               <a class='btn btn-primary' href="${verificationLink}">Verify Email</a>`,
     };
 
     await transporter.sendMail(mailOptions);
@@ -716,7 +716,7 @@ const paymentSuccess = async (req, res) => {
       from: process.env.EMAIL, // Sender's email address
       to: billingEmail, // Recipient's email address (user's email)
       subject: 'Store Purchase Confirmation',
-      text: `Dear ${name},\n\nThank you for purchasing the store "${storeName}".\n\nTransaction Details:\n- Amount: $${amount.toFixed(2)}\n- Order ID: ${orderId}\n- Payment ID: ${paymentId}\n\nIf you have any questions or need assistance, feel free to contact us.\n\nBest regards,\nYour Company Name`
+      text: `Dear ${name},\n\nThank you for purchasing the store "${storeName}".\n\nTransaction Details:\n- Amount: ₹${amount.toFixed(2)}\n- Order ID: ${orderId}\n- Payment ID: ${paymentId}\n\nIf you have any questions or need assistance, feel free to contact us.\n\nBest regards,\nShop2Host`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -814,26 +814,39 @@ const loadTransactions = async(req,res,next)=>{
 const replyToTicket = async (req, res) => {
   const { reply } = req.body;
   const ticketId = req.params.ticketId;
-  const userId = req.session.user_id; // Assuming user ID is stored in session
+  const userId = req.session.user_id || req.user.id; // Assuming user ID is stored in session
   
   try {
+      // Fetch if the user is an admin
+      const [rows] = await db.query('SELECT isAdmin FROM users WHERE id = ?', [userId]);
+      
+      
 
-    const isAdmin = await db.query('SELECT isAdmin FROM users WHERE id = ?',[userId])
+      // Extract isAdmin value
+      const isAdmin = rows[0].isAdmin; // Get the actual isAdmin value
+
+      console.log(ticketId, isAdmin, reply); // Log values for debugging
+
+      // Use userId for inserting into replies
       await db.query(
           'INSERT INTO replies (ticket_id, user_id, reply) VALUES (?, ?, ?)',
-          [ticketId, isAdmin, reply]
+          [ticketId, isAdmin, reply] // Correctly using userId
       );
+
+      // Update ticket status to Pending
       await db.query(
-        'UPDATE tickets SET status = ? WHERE id = ?',
-        ['Pending', ticketId]
-    );
-      res.redirect(`/support-ticket/${ticketId}`); // Redirect back to the specific ticket's detail page
+          'UPDATE tickets SET status = ? WHERE id = ?',
+          ['Pending', ticketId]
+      );
+
+      // Redirect back to the specific ticket's detail page
+      res.redirect(`/support-ticket/${ticketId}`);
   } catch (error) {
       console.error('Error replying to ticket:', error);
       res.status(500).send('Internal Server Error');
+      
   }
 };
-
 module.exports = {
   loadHome,
   loadLitePlan,

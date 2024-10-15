@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Mode</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .maintenance-container {
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+        .countdown {
+            font-size: 1.5rem;
+            color: #28a745; /* Green color for countdown */
+        }
+    </style>
+</head>
+<body>
+
+<div class="maintenance-container">
+    <h1>We'll Be Back Soon!</h1>
+    <p>Our website is currently undergoing scheduled maintenance.</p>
+    <p>Please check back later.</p>
+    
+    <div class="countdown" id="countdown-timer">Loading...</div>
+
+    <p>If you have any questions, feel free to reach out to our support team.</p>
+    <p>Follow us on our social media:</p>
+    <a href="https://facebook.com/shop2host" target="_blank">Facebook</a> | 
+    <a href="https://twitter.com/shop2host" target="_blank">Twitter</a> | 
+    <a href="https://instagram.com/shop2host" target="_blank">Instagram</a>
+</div>
+
+<script>
+    // Countdown timer example (set to 10 minutes)
+    let countdownTime = 600; // seconds
+    const countdownElement = document.getElementById('countdown-timer');
+
+    function updateCountdown() {
+        const minutes = Math.floor(countdownTime / 60);
+        const seconds = countdownTime % 60;
+
+        countdownElement.textContent = `Estimated time until we're back: ${minutes}m ${seconds}s`;
+        
+        if (countdownTime > 0) {
+            countdownTime--;
+        } else {
+            clearInterval(countdownInterval);
+            countdownElement.textContent = "We're back online!";
+        }
+    }
+
+    const countdownInterval = setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>

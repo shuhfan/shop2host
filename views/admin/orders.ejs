@@ -1,0 +1,95 @@
+<div class="wrapper">
+    <%- include('../partials/adminMenu') %>
+
+    <div class="main" style="height: 100vh;">
+        <%- include('../partials/adminNav') %>
+
+        <main class="content p-0" style="overflow: scroll;">
+            <div class="container-fluid p-0">
+                
+                    <div class="row">
+                        <div class="col-12 col-lg-12 col-xxl-12 d-flex pe-0">
+                            <div class="card flex-fill w-100 ">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Dashboard</h5>
+                                </div>
+                                <table class="table table-hover my-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Status</th>
+                                            <th class="sty-col">Renewal cost</th>
+                                            <th class="sty-col"> plan</th>
+                                            <!-- <th class="sty-col">Create Date</th> -->
+                                            <th class="sty-col">Action </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% orders.forEach(order => { %>
+                                            <tr>
+                                                <td><%= order.domain_name %></td>
+                                                <td>
+                                                    <% if (order.status === 'Active') { %>
+                                                        <span class="badge bg-lt-green text-success">Active</span>
+                                                    <% } else if (order.status === 'Pending') { %>
+                                                        <span class="badge bg-yellow text-warning">Pending</span>
+                                                    <% } else if (order.status === 'Cancelled') { %>
+                                                        <span class="badge bg-red text-danger">Cancelled</span>
+                                                    <% } %>
+                                                </td>
+                                                <td><%= order.amount %> INR</td> 
+                                                <td><%= order.plan %></td>
+                                                <!-- <td>
+                                                    <%= new Date(order.created_at).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    }) %>
+                                                </td>  -->
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Edit
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" onclick="changeStatus('<%= order.id %>', 'Active')">Active</a>
+                                                            <a class="dropdown-item" href="#" onclick="changeStatus('<%= order.id %>', 'Pending')">Pending</a>
+                                                            <a class="dropdown-item" href="#" onclick="changeStatus('<%= order.id %>', 'Cancelled')">Cancelled</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </main>
+
+        <%- include('../partials/dashboardFooter') %>
+    </div>
+</div>
+<script>
+    function changeStatus(orderId, newStatus) {
+        fetch(`/admin/orders/${orderId}/status`, {
+            method: 'PATCH', // Use PATCH or PUT based on your API design
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+        })
+        .then(response => {
+            if (response.ok) {
+                // Optionally, refresh the page or update the UI
+                location.reload(); // Reloads the page to see updated status
+            } else {
+                alert('Failed to update status');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    </script>
