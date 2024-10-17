@@ -1418,18 +1418,18 @@ Location:
 .hero3-section-area {
   position: relative;
   z-index: 1;
-  padding: 180px 0 120px;
+  padding: 120px 0 120px;
 }
 
 @media (max-width: 767px) {
   .hero3-section-area {
-    padding: 180px 0 60px;
+    padding: 120px 0 60px;
   }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .hero3-section-area {
-    padding: 180px 0 60px;
+    padding: 120px 0 60px;
   }
 }
 

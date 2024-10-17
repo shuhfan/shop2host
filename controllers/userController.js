@@ -153,10 +153,18 @@ const signup = async (req, res) => {
       from: process.env.EMAIL,
       to: email,
       subject: 'Email Verification - Shop2Host',
-      html: `<p>Hi ${name},</p>
-               <p>Thank you for registering. Please verify your email by clicking the link below:</p>
-               <a class='btn btn-primary' href="${verificationLink}">Verify Email</a>`,
-    };
+      html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+              <h2 style="color: #333;">Welcome to Shop2Host!</h2>
+              <p style="font-size: 16px; color: #555;">Hi ${name},</p>
+              <p style="font-size: 16px; color: #555;">Thank you for registering. Please verify your email by clicking the button below:</p>
+              <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">Verify Email</a>
+              <p style="font-size: 14px; color: #777; margin-top: 30px;">If you did not create an account, no further action is required.</p>
+              <hr style="margin-top: 30px; border-top: 1px solid #eaeaea;">
+              <p style="font-size: 14px; color: #777;">Thank you,<br>The Shop2Host Team</p>
+          </div>
+      `,
+  };
 
     await transporter.sendMail(mailOptions);
     // Check if there's an original URL to redirect to
@@ -716,7 +724,21 @@ const paymentSuccess = async (req, res) => {
       from: process.env.EMAIL, // Sender's email address
       to: billingEmail, // Recipient's email address (user's email)
       subject: 'Store Purchase Confirmation',
-      text: `Dear ${name},\n\nThank you for purchasing the store "${storeName}".\n\nTransaction Details:\n- Amount: ₹${amount.toFixed(2)}\n- Order ID: ${orderId}\n- Payment ID: ${paymentId}\n\nIf you have any questions or need assistance, feel free to contact us.\n\nBest regards,\nShop2Host`
+      html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+              <h2 style="color: #333;">Purchase Confirmation</h2>
+              <p style="font-size: 16px; color: #555;">Dear ${name},</p>
+              <p style="font-size: 16px; color: #555;">Thank you for purchasing the store "<strong>${storeName}</strong>".</p>
+              <h4 style="color: #007bff;">Transaction Details:</h4>
+              <ul style="list-style-type: none; padding-left: 0;">
+                  <li style="font-size: 16px; color: #555;">Amount: <strong>₹${amount.toFixed(2)}</strong></li>
+                  <li style="font-size: 16px; color: #555;">Order ID: <strong>${orderId}</strong></li>
+                  <li style="font-size: 16px; color: #555;">Payment ID: <strong>${paymentId}</strong></li>
+              </ul>
+              <p style="font-size: 16px; color: #555;">If you have any questions or need assistance, feel free to contact us.</p>
+              <p style="font-size: 14px; color: #777;">Best regards,<br>The Shop2Host Team</p>
+          </div>
+      `,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -741,12 +763,32 @@ const supportTicket = async (req, res) => {
   const userId = req.session.user_id || req.user.id; // Get user ID from session
 
   try {
-    console.log({ userId, subject, priority, related_service, message, attachmentPath });
       // Insert ticket into the database
       await db.query(
           'INSERT INTO tickets (user_id, subject, priority, related_service, message, attachment) VALUES (?, ?, ?, ?, ?, ?)',
           [userId, subject, priority, related_service, message, attachmentPath]
       );
+
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: process.env.EMAIL,
+        subject: 'New Support Ticket Created',
+        html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+            <h2 style="color: #333;">New Support Ticket</h2>
+            <p style="font-size: 16px; color: #555;"><strong>Subject:</strong> ${subject}</p>
+            <p style="font-size: 16px; color: #555;"><strong>Priority:</strong> ${priority}</p>
+            <p style="font-size: 16px; color: #555;"><strong>Related Service:</strong> ${related_service}</p>
+            <h4 style="color: #007bff;">Message:</h4>
+            <p style="font-size: 16px; color: #555;">${message}</p>
+            <hr style="border-top: 1px solid #eaeaea;">
+            <p style="font-size: 14px; color: #777;">Thank you,<br>The Shop2Host Team</p>
+        </div>
+    `,
+    };
+
+    // Send email notification
+    await transporter.sendMail(mailOptions);
 
       res.redirect('/support'); 
   } catch (error) {
@@ -820,12 +862,8 @@ const replyToTicket = async (req, res) => {
       // Fetch if the user is an admin
       const [rows] = await db.query('SELECT isAdmin FROM users WHERE id = ?', [userId]);
       
-      
-
       // Extract isAdmin value
       const isAdmin = rows[0].isAdmin; // Get the actual isAdmin value
-
-      console.log(ticketId, isAdmin, reply); // Log values for debugging
 
       // Use userId for inserting into replies
       await db.query(
@@ -838,6 +876,27 @@ const replyToTicket = async (req, res) => {
           'UPDATE tickets SET status = ? WHERE id = ?',
           ['Pending', ticketId]
       );
+
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to:  process.env.EMAIL,
+        subject: `Reply to Your Ticket #${ticketId}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+                <h2 style="color: #333;">New Reply to Your Support Ticket</h2>
+                <p style="font-size: 16px; color: #555;">Dear Admin,</p>
+                <p style="font-size: 16px; color: #555;">You have received a new reply to your support ticket:</p>
+                <h4 style="color: #007bff;">Ticket ID: ${ticketId}</h4>
+                <p style="font-size: 16px; color: #555;"><strong>Reply:</strong></p>
+                <p style="font-size: 16px; color: #555;">${reply}</p>
+                <hr style="border-top: 1px solid #eaeaea;">
+                <p style="font-size: 14px; color: #777;">Thank you,<br>The Shop2Host Team</p>
+            </div>
+        `,
+    };
+
+    // Send email notification
+    await transporter.sendMail(mailOptions);
 
       // Redirect back to the specific ticket's detail page
       res.redirect(`/support-ticket/${ticketId}`);

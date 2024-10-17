@@ -36,6 +36,7 @@ admin_router.get('/signout',auth.isLogin,adminController.signOut)
 admin_router.get('/category',auth.isLogin,adminController.loadAddCategory)
 admin_router.get('/orders',auth.isLogin,adminController.loadOrders)
 admin_router.get('/user-management',auth.isLogin,adminController.loadUserManagement)
+admin_router.get('/promotions',auth.isLogin,adminController.loadPromotions)
 
 admin_router.get('/tickets',auth.isLogin,adminController.loadTickets)
 admin_router.get('/ticket/:ticketId',auth.isLogin,adminController.openTicket)
@@ -48,4 +49,5 @@ admin_router.post('/delete-category/:id',auth.isLogin,adminController.deleteCate
 admin_router.post('/delete-user/:id',auth.isLogin,adminController.deleteUser)
 admin_router.post('/support-ticket/:ticketId/reply',auth.isLogin,adminController.ticketReplay)
 admin_router.post('/admin/maintenance',auth.isLogin,adminController.changeMaintenanceMode)
+admin_router.post('/promotions',auth.isLogin,adminController.sendPromotions)
 module.exports = admin_router

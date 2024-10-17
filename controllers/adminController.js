@@ -1,5 +1,14 @@
 const db = require('../config/db')
 const bcrypt = require('bcrypt')
+const nodemailer = require('nodemailer')
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
 const loadDashboard = async (req, res) => {
     try {
         // Fetch total users
@@ -227,8 +236,6 @@ const ticketReplay = async (req, res) => {
     try {
         const [rows] = await db.query('SELECT isAdmin FROM users WHERE id = ?', [adminId]);
         const isAdmin = rows[0].isAdmin;
-        console.log(ticketId, isAdmin, reply);
-
 
         await db.query(
             'INSERT INTO replies (ticket_id, user_id, reply) VALUES (?, ?, ?)',
@@ -239,6 +246,33 @@ const ticketReplay = async (req, res) => {
             'UPDATE tickets SET status = ? WHERE id = ?',
             ['Answered', ticketId]
         );
+
+        const [ticketRows] = await db.query('SELECT user_id FROM tickets WHERE id = ?', [ticketId]);
+        const userId = ticketRows[0].user_id;
+
+        const [userRows] = await db.query('SELECT email FROM users WHERE id = ?', [userId]);
+        const userEmail = userRows[0].email;
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to:  userEmail,
+            subject: `Reply to Your Ticket #${ticketId}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+                    <h2 style="color: #333;">New Reply to Your Support Ticket</h2>
+                    <p style="font-size: 16px; color: #555;">Dear User,</p>
+                    <p style="font-size: 16px; color: #555;">You have received a new reply to your support ticket:</p>
+                    <h4 style="color: #007bff;">Ticket ID: ${ticketId}</h4>
+                    <p style="font-size: 16px; color: #555;"><strong>Reply:</strong></p>
+                    <p style="font-size: 16px; color: #555;">${reply}</p>
+                    <hr style="border-top: 1px solid #eaeaea;">
+                    <p style="font-size: 14px; color: #777;">Thank you,<br>The Shop2Host Team</p>
+                </div>
+            `,
+        };
+    
+        // Send email notification
+        await transporter.sendMail(mailOptions);
 
         res.redirect('/admin/tickets'); // Redirect back to the tickets page
     } catch (error) {
@@ -271,6 +305,51 @@ const changeMaintenanceMode = (req, res) => {
     res.status(200).send('Maintenance mode updated');
 }
 
+const loadPromotions = async(req,res,next)=>{
+    try {
+        res.render('promotions')
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+const sendPromotions = async (req, res) => {
+    const { emailList, email, subject, message } = req.body; 
+
+    try {
+        // Check if sending to all users or individual emails
+        if (emailList === 'all') {
+            // Fetch all user emails from the database
+            const [users] = await db.query('SELECT email FROM users');
+            const emails = users.map(user => user.email);
+
+            // Send email to each user
+            await Promise.all(emails.map(email => {
+                return transporter.sendMail({
+                    from: process.env.EMAIL,
+                    to: email,
+                    subject: subject,
+                    html: `<p>${message}</p>`,
+                });
+            }));
+        } else {
+            // Send email to a specific user (assuming email is provided)
+            await transporter.sendMail({
+                from: process.env.EMAIL,
+                to: email,
+                subject: subject,
+                html: `<p>${message}</p>`,
+            });
+        }
+
+        res.redirect('/admin/promotions');
+    } catch (error) {
+        console.error('Error sending promotions:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 module.exports = {
     loadDashboard,
     loadAdminLogin,
@@ -287,4 +366,6 @@ module.exports = {
     ticketReplay,
     openTicket,
     changeMaintenanceMode,
+    loadPromotions,
+    sendPromotions,
 }

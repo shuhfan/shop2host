@@ -20,7 +20,7 @@
 
             <li class="mb-1 sidebar-item">
                 <a href="/admin/tickets" class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
-                    <i class="fa-solid fa-table-list text-dark fs-4 me-3"></i><span class="fs-4">Tickets</span>
+                    <i class="fa-solid fa-ticket text-dark fs-4 me-3"></i><span class="fs-4">Tickets</span>
                     <i class=""></i>
                 </a>
             </li>
@@ -47,6 +47,13 @@
                     <i class="fa-solid fa-bag-shopping text-dark  fs-4 me-3"></i><span class="fs-4">Orders</span>
                 </a>
             </li>
+
+            <li class="mb-1 sidebar-item">
+                <a href="/admin/promotions" class="btn btn-toggle  rounded border-0 text-start px-4 collapsed sty-font1">
+                    <i class="fa-solid fa-bell text-dark  fs-4 me-3"></i><span class="fs-4">Promotions</span>
+                </a>
+            </li>
+
             <li class="mb-1 sidebar-item">
                 <a href="#" class="btn btn-toggle rounded border-0 text-start px-4 collapsed sty-font1" onclick="toggleMaintenanceMode()">
                     <i class="fa-regular fa-file-code text-dark fs-4 me-3"></i>
@@ -62,7 +69,7 @@
 
 <script>
     function toggleMaintenanceMode() {
-    const isEnabled = confirm("Do you want to enable maintenance mode?");
+    const isEnabled = confirm("Press OK to enable or Cancel to disable Maintenance Mode");
 
     fetch('/admin/maintenance', {
         method: 'POST',

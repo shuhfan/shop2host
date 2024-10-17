@@ -1,0 +1,87 @@
+<div class="wrapper">
+    <%- include('../partials/adminMenu') %>
+
+        <div class="main" style="height: 100vh;">
+            <%- include('../partials/adminNav') %>
+                <style>
+                   
+
+                    .container {
+                        margin-top: 50px;
+                        max-width: 600px;
+                    }
+
+                    .card {
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    }
+
+                    h1 {
+                        color: #343a40;
+                    }
+
+                    label {
+                        font-weight: bold;
+                    }
+
+                    .btn-primary {
+                        background-color: #007bff;
+                        border-color: #007bff;
+                    }
+                </style>
+
+                <main class="content p-0" style="overflow-x: hidden;">
+                    <div class="container-fluid p-0">
+                       
+                        <div class="container">
+                            <div class="card">
+                                <h1 class="text-center">Send Promotions</h1>
+                                <form action="/admin/promotions" method="POST">
+                                    <div class="form-group mb-3">
+                                        <label for="emailList">Send To:</label>
+                                        <select name="emailList" id="emailList" class="form-control">
+                                            <option value="all">All Users</option>
+                                            <option value="individual">Individual User</option>
+                                        </select>
+                                    </div>
+                        
+                                    <div id="individualEmail" class="form-group mb-3" style="display:none;">
+                                        <label for="email">User Email:</label>
+                                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter user's email">
+                                    </div>
+                        
+                                    <div class="form-group mb-3">
+                                        <label for="subject">Subject:</label>
+                                        <input type="text" name="subject" id="subject" class="form-control" required>
+                                    </div>
+                        
+                                    <div class="form-group mb-3">
+                                        <label for="message">Message:</label>
+                                        <textarea name="message" id="message" class="form-control" rows="5" required></textarea>
+                                    </div>
+                        
+                                    <button type="submit" class="btn btn-primary btn-block">Send Promotion</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <%- include('../partials/dashboardFooter') %>
+        </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    document.getElementById('emailList').addEventListener('change', function () {
+        const value = this.value;
+        document.getElementById('individualEmail').style.display = value === 'individual' ? 'block' : 'none';
+    });
+</script>
+
+</body>
+
+</html>
