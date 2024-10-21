@@ -3,7 +3,7 @@
 
     <div class="main" style="height: 100vh;">
         <%- include('../partials/adminNav') %>
-        <main class="content p-0" style="overflow: scroll; overflow-x: hidden;">
+        <main class="content p-0" style="overflow: scroll;">
             <div class="container-fluid p-0">
                 <div class="card flex-fill mb-0">
                     <div class="card-header">
@@ -21,6 +21,7 @@
                                     <th>Phone</th>
                                     <th>Total Orders</th>
                                     <th>Registered Date</th>
+                                    <th>IP Address</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -32,10 +33,10 @@
                                         <td><span class=""><%= user.email %></span></td> 
                                         <td class="sty-col"><%= user.phone %></td> 
                                         <td class="sty-col"><%= user.order_count || 0 %></td>
-                                        <td class="sty-col"><%= new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %> at 
+                                        <td class="sty-col"><%= new Date(user.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) %> at 
                                             <%= new Date(user.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></td> 
+                                        <td class="sty-col"><%= user.ip_address %></td>
                                         <td class="sty-col">
-                                            
                                             <form action="/admin/delete-user/<%= user.id %>" method="POST" style="display:inline;">
                                                 <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash text-white"></i></button>
                                             </form>
@@ -52,4 +53,3 @@
         <%- include('../partials/dashboardFooter') %>
     </div>
 </div>
-

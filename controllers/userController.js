@@ -118,18 +118,38 @@ const loadSignout = (req, res, next) => {
 }
 
 const signup = async (req, res) => {
-  const { name, phone, email, password, confirmPassword } = req.body;
+  const { name, phone, email, password, confirmPassword, 'g-recaptcha-response': recaptchaResponse } = req.body;
 
   // Basic validation
-  if (!name || !phone || !email || !password || !confirmPassword) {
+  if (!name || !phone || !email || !password || !confirmPassword ) {
     return res.status(400).render('signup', { message: 'All fields are required.' });
+  }
+
+  if (!recaptchaResponse) {
+    return res.status(400).render('signup', { message: 'Captcha verification failed. Please try again.' });
   }
 
   if (password !== confirmPassword) {
     return res.status(400).render('signup', { message: 'Passwords do not match.' });
   }
 
+  const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
   try {
+    // Verify CAPTCHA
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY; // Store this in your environment variables
+    const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
+      params: {
+        secret: secretKey,
+        response: recaptchaResponse,
+      },
+    });
+
+    const { success } = response.data;
+    if (!success) {
+      return res.status(400).render('signup', { message: 'Captcha verification failed. Please try again.' });
+    }
+
     // Check if user already exists
     const [existingUser] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (existingUser.length > 0) {
@@ -138,42 +158,28 @@ const signup = async (req, res) => {
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     // Insert the user into the database
-    const result = await db.query(
-      'INSERT INTO users (name, phone, email, password, verificationToken, verified) VALUES (?, ?, ?, ?,?, ?)',
-      [name, phone, email, hashedPassword, verificationToken, false]
+    await db.query(
+      'INSERT INTO users (name, phone, email, password, ip_address) VALUES (?, ?, ?, ?, ?)',
+      [name, phone, email, hashedPassword, ipAddress]
     );
 
-    // Send verification email
-    const verificationLink = `${process.env.BASE_URL}/verify-email?token=${verificationToken}&email=${email}`;
+    const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (user.length === 0) {
+      return res.status(400).render('signup', { message: 'User already exists.' });
+    }
 
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: 'Email Verification - Shop2Host',
-      html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
-              <h2 style="color: #333;">Welcome to Shop2Host!</h2>
-              <p style="font-size: 16px; color: #555;">Hi ${name},</p>
-              <p style="font-size: 16px; color: #555;">Thank you for registering. Please verify your email by clicking the button below:</p>
-              <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">Verify Email</a>
-              <p style="font-size: 14px; color: #777; margin-top: 30px;">If you did not create an account, no further action is required.</p>
-              <hr style="margin-top: 30px; border-top: 1px solid #eaeaea;">
-              <p style="font-size: 14px; color: #777;">Thank you,<br>The Shop2Host Team</p>
-          </div>
-      `,
-  };
+    const User = user[0];
+    req.session.user_id = User.id;
 
-    await transporter.sendMail(mailOptions);
     // Check if there's an original URL to redirect to
     const redirectUrl = req.session.originalUrl || '/dashboard'; // Default to dashboard if no original URL
 
     // Clear the original URL from the session after redirection
     delete req.session.originalUrl;
 
-    res.status(201).render('login', { message: 'Registration successful! Please check your email to verify your account.' })
+    res.redirect(redirectUrl);
   } catch (error) {
     console.error('Error during user registration:', error);
     res.status(500).render('signup', { message: 'An error occurred while registering the user.' });
@@ -190,9 +196,9 @@ const login = async (req, res, next) => {
 
   try {
     // Check if user exists and is verified
-    const [user] = await db.query('SELECT * FROM users WHERE email = ? AND verified = ?', [email, true]);
+    const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (user.length === 0) {
-      return res.status(400).render('login', { message: 'User not found or Email not verified.' });
+      return res.status(400).render('login', { message: 'User not found' });
     }
 
     const existingUser = user[0];
@@ -208,7 +214,6 @@ const login = async (req, res, next) => {
 
     // Check if there’s an original URL stored in the session
     const redirectUrl = req.session.originalUrl || '/dashboard'; // Redirect to original URL or default to dashboard
-    console.log(req.session.originalUrl);
 
     // Clear the original URL after use
     delete req.session.originalUrl;
